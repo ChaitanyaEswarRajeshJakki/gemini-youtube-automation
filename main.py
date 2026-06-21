@@ -1,12 +1,33 @@
 import os
-import google.generativeai as genai
+import sys
+from google import genai
+from gtts import gTTS
 
-# Fetch the key
+# 1. Fetch API Key
 api_key = os.environ.get("GEMINI_API_KEY")
 
-# If the code reaches here, the key MUST be in the environment
 if not api_key:
-    raise ValueError("GEMINI_API_KEY is still not visible to the Python script.")
+    # If this triggers, your GitHub Secret is NOT being passed to the code.
+    print("ERROR: GEMINI_API_KEY not found in environment variables.")
+    sys.exit(1)
 
-genai.configure(api_key=api_key)
-print("Configuration successful.")
+# 2. Setup Client & Output Directory
+client = genai.Client(api_key=api_key)
+output_dir = "output"
+os.makedirs(output_dir, exist_ok=True)
+
+def run_automation():
+    print("Starting generation...")
+    
+    # Example logic: Generate a test file
+    text = "Automation pipeline is successfully configured."
+    tts = gTTS(text=text, lang='en')
+    
+    # Save file into the output/ folder
+    file_path = os.path.join(output_dir, "status.mp3")
+    tts.save(file_path)
+    
+    print(f"Success! File created at {file_path}")
+
+if __name__ == "__main__":
+    run_automation()
