@@ -48,7 +48,6 @@ def update_content_plan(plan):
         json.dump(plan, f, indent=2)
 
 
-
 def produce_lesson_videos(lesson):
     print(f"\n▶️ Starting production for Lesson: '{lesson['title']}'")
     chapter_safe = re.sub(r'[^\w]', '_', str(lesson['chapter'])).strip('_')
@@ -59,14 +58,15 @@ def produce_lesson_videos(lesson):
 
     print("\n--- Producing Long-Form Video ---")
 
-    intro_slide = {"title": lesson['title'], "content": f"Chapter {lesson['chapter']} | Part {lesson['part']}"}
-    outro_slide = {"title": "Thanks for Watching!", "content": "Like, Share & Subscribe for more daily AI content!\n#AIforDevelopers"}
+    intro_slide = {"title": lesson['title'], "content": f"The reality of {lesson['title']}..."}
+    outro_slide = {"title": "The Wrap Up", "content": "That's the truth about it. If you want more, hit subscribe."}
     all_slides = [intro_slide] + lesson_content['long_form_slides'] + [outro_slide]
 
+    # Humanized, conversational script segments
     slide_scripts = [
-        f"Hello and welcome to AI for Developers. I'm {YOUR_NAME} talking bot. Today’s lesson is titled {lesson['title']}.",
+        f"You ever wonder why {lesson['title']} happened? It's not just business—it's pure, unadulterated human stupidity. Let's break it down.",
         *[s['content'] for s in lesson_content['long_form_slides']],
-        "Thanks for watching! If you found this helpful, make sure to subscribe to our channel and hit the like button."
+        "Look, money is weird. If you want more stories about people fumbling their finances, hit subscribe."
     ]
 
     slide_audio_paths = []
@@ -99,16 +99,15 @@ def produce_lesson_videos(lesson):
     )
 
     print("\n--- Producing Short Video ---")
-    # short_script = f"{lesson_content['short_form_highlight']}"
     short_script = (f"{lesson_content['short_form_highlight']}\n\n"
-    f"Link to the full lesson is in the description below.")
+    f"Link to the full story is in the description.")
     short_audio_mp3_path = OUTPUT_DIR / f"short_audio_{unique_id}.mp3"
     short_audio_path = text_to_speech(short_script, short_audio_mp3_path)
 
     short_slide_dir = OUTPUT_DIR / f"slides_short_{unique_id}"
     short_slide_content = {
         "title": "Quick Tip!",
-        "content": f"{lesson_content['short_form_highlight']}\n\n#AI for developers by chaitanya"
+        "content": f"{lesson_content['short_form_highlight']}"
     }
     short_slide_path = generate_visuals(
         output_dir=short_slide_dir,
@@ -129,9 +128,9 @@ def produce_lesson_videos(lesson):
     )
 
     print("\n📤 Uploading to YouTube...")
-    hashtags = lesson_content.get("hashtags", "#AI #Developer #LearnAI")
-    long_desc = f"Part of the 'AI for Developers' series by {YOUR_NAME}.\n\nToday's Lesson: {lesson['title']}\n\n{hashtags}"
-    long_tags = "AI, Artificial Intelligence, Developer, Programming, Tutorial, " + lesson['title'].replace(" ", ", ")
+    hashtags = lesson_content.get("hashtags", "#Finance #History #Money")
+    long_desc = f"The real story behind {lesson['title']}.\n\n{hashtags}"
+    long_tags = "Finance, History, Money, Viral, " + lesson['title'].replace(" ", ", ")
 
     long_video_id = upload_to_youtube(
         long_video_path,
@@ -144,19 +143,15 @@ def produce_lesson_videos(lesson):
     if long_video_id:
         print("⏳ Waiting 30 seconds before uploading the short...")
         time.sleep(30)
-        highlight = (lesson_content.get('short_form_highlight') or '').strip()
-        if not highlight:
-            highlight = f"AI Quick Tip: {lesson['title']}"
-        short_title = f"{highlight[:90].rstrip()} #Shorts"
-        # short_desc = f"Watch the full lesson with {YOUR_NAME} here: https://www.youtube.com/watch?v={long_video_id}\n\n#AI #Programming #Tech #Developer"
+        short_title = f"{lesson['title']} explained #Shorts"
         short_desc = (f"{lesson_content['short_form_highlight']}\n\n"
-                      f"Watch the full lesson with {YOUR_NAME} here: https://www.youtube.com/watch?v={long_video_id}\n\n"
+                      f"Watch the full story here: https://www.youtube.com/watch?v={long_video_id}\n\n"
                       f"{hashtags}")
         upload_to_youtube(
             short_video_path,
             short_title.strip(),
             short_desc,
-            "AI,Shorts,TechTip",
+            "Finance,Shorts,History",
             short_thumb_path
         )
         return long_video_id
@@ -164,27 +159,21 @@ def produce_lesson_videos(lesson):
 
 
 def main():
-    print("🚀 Starting Autonomous AI Course Generator")
+    print("🚀 Starting Autonomous Viral Content Generator")
     print(f"📁 Current working dir: {os.getcwd()}")
-    print(f"📁 OUTPUT_DIR: {OUTPUT_DIR.resolve()}")
 
     try:
         OUTPUT_DIR.mkdir(exist_ok=True)
-        print(f"📁 Created output folder: {OUTPUT_DIR.exists()}")
         plan = get_content_plan()
         pending = [(i, lesson) for i, lesson in enumerate(plan['lessons']) if lesson['status'] == 'pending']
 
         if not pending:
-            print("🎉 All lessons produced! Generating new content plan to restart from scratch...")
-
+            print("🎉 All lessons produced! Generating new content...")
             previous_titles = [lesson['title'] for lesson in plan['lessons']]
-            new_plan = generate_curriculum(previous_titles=previous_titles)  # 🔁 Pass prior titles
+            new_plan = generate_curriculum(previous_titles=previous_titles)
             update_content_plan(new_plan)
             plan = new_plan
             pending = [(i, lesson) for i, lesson in enumerate(new_plan['lessons']) if lesson['status'] == 'pending']
-            if not pending:
-                print("⚠️ Curriculum generated but no valid lessons found.")
-                return
 
         failed_lessons = []
         for lesson_index, lesson in pending[:LESSONS_PER_RUN]:
@@ -195,50 +184,28 @@ def main():
                         if original_lesson['title'].strip().lower() == lesson['title'].strip().lower():
                             original_lesson['status'] = 'complete'
                             original_lesson['youtube_id'] = video_id
-                            print(f"✅ Completed lesson: {lesson['title']}")
                             break
-                    else:
-                        print(f"⚠️ Could not find lesson in plan to mark as complete: {lesson['title']}")
+                    print(f"✅ Completed: {lesson['title']}")
                 else:
-                    print(f"❌ Upload failed (no video ID returned): {lesson['title']}")
                     failed_lessons.append(lesson['title'])
             except Exception as e:
-                print(f"❌ Failed producing lesson: {lesson['title']}")
                 traceback.print_exc()
                 failed_lessons.append(lesson['title'])
             finally:
                 update_content_plan(plan)
-                print("📦 Content plan saved.")
 
         if failed_lessons:
-            print(f"\n❌ PIPELINE FAILED — {len(failed_lessons)} lesson(s) did not complete:")
-            for title in failed_lessons:
-                print(f"   - {title}")
             sys.exit(1)
 
     except Exception as e:
-        print("❌ Critical error in main()")
         traceback.print_exc()
         sys.exit(1)
 
     try:
         for file in OUTPUT_DIR.glob("*.wav"):
             file.unlink()
-            print(f"🧹 Deleted: {file}")
     except Exception as e:
-        print(f"⚠️ Could not clean up .wav files: {e}")
+        print(f"⚠️ Cleanup warning: {e}")
 
 if __name__ == "__main__":
     main()
-# Use this exact system instruction to ensure the "Funny Finance" tone
-system_instruction = """
-You are a world-class viral YouTube finance creator with a satirical, fast-paced, and witty personality. 
-Your goal is to explain complex financial history in a way that is funny, high-retention, and addictive.
-
-Rules:
-1. Always start with a 'hook' that challenges a common belief.
-2. Use sarcasm and humor to explain why humans make bad financial decisions.
-3. NEVER provide actual financial advice.
-4. Keep scripts under 60 seconds (approx 150 words).
-5. Ensure the title is click-worthy and creates a 'curiosity gap'.
-"""
