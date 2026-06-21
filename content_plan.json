@@ -1,0 +1,124 @@
+{
+    "lessons": [
+        {
+            "chapter": 1,
+            "part": 1,
+            "title": "So, You Wanna Code AI? The Absolute Beginner's Guide (No Jargon, Promise!)",
+            "status": "planned"
+        },
+        {
+            "chapter": 1,
+            "part": 2,
+            "title": "Python Crash Course for AI (If You're Still Using Java for Everything, We Need to Talk)",
+            "status": "planned"
+        },
+        {
+            "chapter": 1,
+            "part": 3,
+            "title": "What Even *Is* Machine Learning? (And Why It's Not Just Sci-Fi Anymore)",
+            "status": "planned"
+        },
+        {
+            "chapter": 2,
+            "part": 1,
+            "title": "NumPy & Pandas: Your Data's Best Friends (Seriously, Learn Them or Suffer)",
+            "status": "planned"
+        },
+        {
+            "chapter": 2,
+            "part": 2,
+            "title": "TensorFlow & Keras: Building Your First Model (No, It's Not That Hard, I Swear)",
+            "status": "planned"
+        },
+        {
+            "chapter": 2,
+            "part": 3,
+            "title": "PyTorch Power-Up: The Other Big Player (And Why You Might Actually Like It Better)",
+            "status": "planned"
+        },
+        {
+            "chapter": 3,
+            "part": 1,
+            "title": "Supervised Learning: Predicting the Future (With Labeled Data, Cheater!)",
+            "status": "planned"
+        },
+        {
+            "chapter": 3,
+            "part": 2,
+            "title": "Unsupervised Learning: Finding Patterns in Chaos (Like My Bank Account)",
+            "status": "planned"
+        },
+        {
+            "chapter": 3,
+            "part": 3,
+            "title": "Deep Learning Demystified: The Neural Network Revolution (It's Cooler Than It Sounds)",
+            "status": "planned"
+        },
+        {
+            "chapter": 4,
+            "part": 1,
+            "title": "Convolutional Neural Networks (CNNs): Making Computers See (And Not Just Pictures of Cats)",
+            "status": "planned"
+        },
+        {
+            "chapter": 4,
+            "part": 2,
+            "title": "Recurrent Neural Networks (RNNs) & LSTMs: Understanding Sequences (Like Your Ex's Text Messages)",
+            "status": "planned"
+        },
+        {
+            "chapter": 4,
+            "part": 3,
+            "title": "Transformers: The NLP Game Changer (BERT, GPT, and Why Your Chatbot Is Actually Smart Now)",
+            "status": "planned"
+        },
+        {
+            "chapter": 5,
+            "part": 1,
+            "title": "Building a Simple Image Classifier (Your First Real AI App, Prepare to Be Amazed)",
+            "status": "planned"
+        },
+        {
+            "chapter": 5,
+            "part": 2,
+            "title": "Natural Language Processing (NLP): Making Computers Understand Us (Finally!)",
+            "status": "planned"
+        },
+        {
+            "chapter": 5,
+            "part": 3,
+            "title": "Recommender Systems: How Netflix Knows What You Want (And How You Can Build One Too)",
+            "status": "planned"
+        },
+        {
+            "chapter": 6,
+            "part": 1,
+            "title": "Model Deployment 101: Getting Your AI Out There (Flask, FastAPI \u2013 Stop Hiding It!)",
+            "status": "planned"
+        },
+        {
+            "chapter": 6,
+            "part": 2,
+            "title": "MLOps Basics: Managing Your AI Like a Pro (Version Control Ain't Just for Code Anymore)",
+            "status": "planned"
+        },
+        {
+            "chapter": 6,
+            "part": 3,
+            "title": "Cloud AI Platforms: AWS, GCP, Azure (Pick Your Poison, They All Want Your Money)",
+            "status": "planned"
+        },
+        {
+            "chapter": 7,
+            "part": 1,
+            "title": "Ethics in AI: Don't Be a Villain (Seriously, It Matters, Don't Build Skynet)",
+            "status": "planned"
+        },
+        {
+            "chapter": 7,
+            "part": 2,
+            "title": "What's Next? Staying Ahead in the AI Game (Because It Never Stops Changing)",
+            "status": "planned"
+        }
+    ]
+}
