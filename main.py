@@ -1,23 +1,26 @@
 import os
 import sys
-from google import genai 
+import google.generativeai as genai
+from gtts import gTTS
+
 # 1. Fetch API Key
 api_key = os.environ.get("GEMINI_API_KEY")
 
 if not api_key:
-    # If this triggers, your GitHub Secret is NOT being passed to the code.
     print("ERROR: GEMINI_API_KEY not found in environment variables.")
     sys.exit(1)
 
-# 2. Setup Client & Output Directory
-client = genai.Client(api_key=api_key)
+# 2. Configure Client
+genai.configure(api_key=api_key)
+
+# 3. Setup Output Directory
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
 def run_automation():
     print("Starting generation...")
     
-    # Example logic: Generate a test file
+    # Example logic using gTTS
     text = "Automation pipeline is successfully configured."
     tts = gTTS(text=text, lang='en')
     
