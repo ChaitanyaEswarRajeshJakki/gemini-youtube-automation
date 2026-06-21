@@ -1,5 +1,5 @@
 # Gemini API and Google Auth
-google-genai
+google-generativeai
 gtts
 moviepy==1.0.3
 requests
