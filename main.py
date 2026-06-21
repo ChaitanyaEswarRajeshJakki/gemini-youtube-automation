@@ -1,8 +1,6 @@
 import os
 import sys
-from google import genai
-from gtts import gTTS
-
+from google import genai 
 # 1. Fetch API Key
 api_key = os.environ.get("GEMINI_API_KEY")
 
