@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import re
 from io import BytesIO
 from google import genai
 from gtts import gTTS
@@ -15,7 +16,7 @@ ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
-YOUR_NAME = "Chaitanya"
+YOUR_NAME = "NeonSteel"
 
 # --- The "Human" Persona ---
 SYSTEM_PROMPT = """
@@ -32,6 +33,19 @@ You are a witty, street-smart financial commentator.
 if os.name == 'posix':
     change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
 
+def extract_json(response_text):
+    """Robustly extracts JSON from LLM text output by finding the first { and last }."""
+    # Find the first { and last }
+    match = re.search(r'\{.*\}', response_text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(0))
+        except json.JSONDecodeError as e:
+            print(f"❌ Failed to parse found JSON: {e}")
+            raise
+    else:
+        print(f"⚠️ Raw response did not contain valid JSON structure: {response_text[:100]}...")
+        raise ValueError("LLM did not return valid JSON structure.")
 
 def get_pexels_image(query, video_type):
     """Searches for a relevant image on Pexels."""
@@ -55,9 +69,8 @@ def get_pexels_image(query, video_type):
         print(f"⚠️ Pexels error: {e}")
     return None
 
-
 def text_to_speech(text, output_path):
-    """Converts text to speech using gTTS and ensures clean audio using WAV format."""
+    """Converts text to speech using gTTS."""
     try:
         temp_mp3_path = str(output_path).replace('.mp3', '_temp.mp3')
         wav_path = str(output_path.with_suffix('.wav'))
@@ -72,7 +85,6 @@ def text_to_speech(text, output_path):
     except Exception as e:
         print(f"❌ Speech Error: {e}")
         raise
-
 
 def generate_curriculum(previous_titles=None):
     """Generates the course curriculum using the persona."""
@@ -89,8 +101,7 @@ def generate_curriculum(previous_titles=None):
         contents=prompt,
         config={"system_instruction": SYSTEM_PROMPT}
     )
-    return json.loads(response.text.strip().replace("```json", "").replace("```", ""))
-
+    return extract_json(response.text)
 
 def generate_lesson_content(lesson_title):
     """Generates lesson content using the persona."""
@@ -102,8 +113,7 @@ def generate_lesson_content(lesson_title):
         contents=prompt,
         config={"system_instruction": SYSTEM_PROMPT}
     )
-    return json.loads(response.text.strip().replace("```json", "").replace("```", ""))
-
+    return extract_json(response.text)
 
 def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title=None, slide_number=0, total_slides=0):
     """Generates a professional slide or thumbnail."""
@@ -125,13 +135,11 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     if not is_thumbnail:
         header_height = int(height * 0.18)
         draw.rectangle([0, 0, width, header_height], fill=(25, 40, 65, 200))
-        # Draw title... (Logic preserved)
         draw.text((width//2, header_height//2), title, font=title_font, fill=(255, 255, 255), anchor="mm")
     
     path = output_dir / (f"thumbnail.png" if is_thumbnail else f"slide_{slide_number:02d}.png")
     final_bg.save(path)
     return str(path)
-
 
 def create_video(slide_paths, audio_paths, output_path, video_type):
     """Combines assets into the final video."""
