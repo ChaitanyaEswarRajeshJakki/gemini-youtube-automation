@@ -1,8 +1,13 @@
 # Gemini API and Google Auth
-google-genai
+google-generativeai
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+gtts
+moviepy==1.0.3
+requests
+Pillow==9.5.0
+pydub
 
 # Text-to-Speech and Video Editing
 gTTS
