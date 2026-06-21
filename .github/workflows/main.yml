@@ -13,9 +13,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Clean & Install dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
+          # Force remove old conflicting packages to prevent import errors
+          pip uninstall -y google-generativeai google-cloud-aiplatform google-api-core
           pip install -r requirements.txt
 
       - name: Run script
