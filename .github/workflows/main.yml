@@ -7,25 +7,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-           - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       
-           - uses: actions/setup-python@v6
-            with:
-              python-version: '3.11'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-           - uses: actions/upload-artifact@v5'
-
-      - name: Clean & Install dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          # Force remove old conflicting packages to prevent import errors
-          pip uninstall -y google-generativeai google-cloud-aiplatform google-api-core
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
+
+      - name: Debug Output
+        run: ls -R output/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
