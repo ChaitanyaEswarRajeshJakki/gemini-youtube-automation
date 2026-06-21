@@ -11,12 +11,24 @@ jobs:
       
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Verify Secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "Checking if secret exists..."
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "Secret found! First 4 chars: ${GEMINI_API_KEY:0:4}"
+          else
+            echo "::error::Secret GEMINI_API_KEY is empty or not passed."
+            exit 1
+          fi
 
       - name: Run script
         env:
