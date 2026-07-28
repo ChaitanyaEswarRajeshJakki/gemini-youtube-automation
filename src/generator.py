@@ -3,10 +3,13 @@
 
 import os
 import json
+import time
+import random
 import requests
 from io import BytesIO
 from google import genai
 from gtts import gTTS
+from gtts.tts import gTTSError
 from moviepy.editor import AudioFileClip, ImageClip, CompositeAudioClip, concatenate_videoclips, vfx
 from moviepy.config import change_settings
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -19,6 +22,13 @@ FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
 YOUR_NAME = "Chaitanya"
+
+# Google's TTS endpoint throttles bursts from shared CI IPs. When it does, it answers
+# 200 OK with no audio stream, which gTTS surfaces as "Probable cause: Unknown".
+TTS_MAX_ATTEMPTS = 5
+TTS_BACKOFF_SECONDS = 5
+TTS_MIN_GAP_SECONDS = 2
+_last_tts_request = 0.0
 
 # GitHub Actions compatibility for ImageMagick
 if os.name == 'posix':
@@ -51,26 +61,49 @@ def get_pexels_image(query, video_type):
     return None
 
 
+def _throttle_tts():
+    """Spaces out TTS requests so a burst doesn't trip Google's rate limiter."""
+    global _last_tts_request
+    elapsed = time.monotonic() - _last_tts_request
+    if elapsed < TTS_MIN_GAP_SECONDS:
+        time.sleep(TTS_MIN_GAP_SECONDS - elapsed)
+    _last_tts_request = time.monotonic()
+
+
 def text_to_speech(text, output_path):
     """Converts text to speech using gTTS and ensures clean audio using WAV format."""
     print(f"🎤 Converting script to speech...")
-    try:
-        temp_mp3_path = str(output_path).replace('.mp3', '_temp.mp3')
-        wav_path = str(output_path.with_suffix('.wav'))
+    temp_mp3_path = str(output_path).replace('.mp3', '_temp.mp3')
+    wav_path = str(output_path.with_suffix('.wav'))
 
-        tts = gTTS(text=text, lang='en', slow=False)
-        tts.save(temp_mp3_path)
+    for attempt in range(1, TTS_MAX_ATTEMPTS + 1):
+        try:
+            _throttle_tts()
+            tts = gTTS(text=text, lang='en', slow=False)
+            tts.save(temp_mp3_path)
 
-        audio = AudioSegment.from_mp3(temp_mp3_path)
-        audio.export(wav_path, format="wav", codec="pcm_s16le")
-        os.remove(temp_mp3_path)
+            # A throttled response can still produce a file — just an empty/truncated one.
+            if os.path.getsize(temp_mp3_path) < 1024:
+                raise gTTSError("gTTS wrote an empty or truncated audio file.")
 
-        print(f"✅ Speech generated and converted to WAV successfully!")
-        return Path(wav_path)
+            audio = AudioSegment.from_mp3(temp_mp3_path)
+            audio.export(wav_path, format="wav", codec="pcm_s16le")
+            os.remove(temp_mp3_path)
 
-    except Exception as e:
-        print(f"❌ ERROR: Failed to generate speech: {e}")
-        raise
+            print(f"✅ Speech generated and converted to WAV successfully!")
+            return Path(wav_path)
+
+        except Exception as e:
+            if os.path.exists(temp_mp3_path):
+                os.remove(temp_mp3_path)
+
+            if attempt == TTS_MAX_ATTEMPTS:
+                print(f"❌ ERROR: Failed to generate speech after {TTS_MAX_ATTEMPTS} attempts: {e}")
+                raise
+
+            delay = TTS_BACKOFF_SECONDS * (2 ** (attempt - 1)) + random.uniform(0, 2)
+            print(f"⚠️ TTS attempt {attempt}/{TTS_MAX_ATTEMPTS} failed ({e}). Retrying in {delay:.1f}s...")
+            time.sleep(delay)
 
 
 def generate_curriculum(previous_titles=None):
