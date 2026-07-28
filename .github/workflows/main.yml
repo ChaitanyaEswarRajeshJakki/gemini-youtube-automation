@@ -5,6 +5,12 @@ on:
     - cron: '0 7 * * *' # 12:30 PM IST daily
   workflow_dispatch:
 
+# A run takes far longer than the gap between a manual dispatch and the daily
+# schedule, so serialise them — two runs pushing to main race each other.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -85,6 +91,34 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add content_plan.json images/demo.gif
-          git commit -m "feat: Update content plan and demo GIF after daily video production" || echo "No changes to commit"
-          git push
+
+          # The production run takes long enough that main can move on beneath us,
+          # which makes a plain push a non-fast-forward. Both files are generated
+          # artifacts, so replay this run's copies onto whatever main is now.
+          STAGING=$(mktemp -d)
+          cp content_plan.json "$STAGING/"
+          if [ -f images/demo.gif ]; then cp images/demo.gif "$STAGING/"; fi
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+
+            cp "$STAGING/content_plan.json" content_plan.json
+            if [ -f "$STAGING/demo.gif" ]; then cp "$STAGING/demo.gif" images/demo.gif; fi
+
+            git add content_plan.json images/demo.gif
+            if git diff --cached --quiet; then
+              echo "✅ Nothing to commit — main is already up to date."
+              exit 0
+            fi
+
+            git commit -m "feat: Update content plan and demo GIF after daily video production"
+            if git push; then
+              echo "✅ Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "⚠️ Push rejected on attempt $attempt — main moved again, retrying..."
+          done
+
+          echo "❌ Could not push after 3 attempts."
+          exit 1
