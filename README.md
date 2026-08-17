@@ -165,7 +165,7 @@ Track progress live in [content_plan.json](content_plan.json).
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=ChaitanyaEswarRajeshJakki/gemini-youtube-automation&type=Date)](https://star-history.com/#ChaitanyaEswarRajeshJakki/gemini-youtube-automation&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=ChaitanyaEswarRajeshJakki/gemini-youtube-automation&type=Date)](https://star-history.dera.page/#ChaitanyaEswarRajeshJakki/gemini-youtube-automation&Date)
 
 ---
 
