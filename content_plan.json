@@ -1,144 +1,144 @@
 {
   "lessons": [
     {
-      "chapter": "Advanced Reinforcement Learning",
-      "part": 21,
-      "title": "Deep Q-Networks (DQN): Teaching AI to Play Atari Like a Human",
+      "chapter": 5,
+      "part": 1,
+      "title": "NLP: Teaching AI to Understand and Talk Like Us",
       "status": "complete",
-      "youtube_id": "57oTPpTgEtw"
+      "youtube_id": "6o4R-dsD7HQ"
     },
     {
-      "chapter": "Advanced Reinforcement Learning",
-      "part": 22,
-      "title": "Policy Gradient Methods: When AI Learns by Adjusting its Habits (REINFORCE & Intro to Actor-Critic)",
-      "status": "complete",
-      "youtube_id": "NENAs5a18ao"
+      "chapter": 5,
+      "part": 2,
+      "title": "LLMs: AI's Super-Powered Storytellers and Problem Solvers",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Reinforcement Learning",
-      "part": 23,
-      "title": "Proximal Policy Optimization (PPO): The Stable Way to Train Complex AI Behaviors",
-      "status": "complete",
-      "youtube_id": "2-rrmX6QD8Q"
+      "chapter": 5,
+      "part": 3,
+      "title": "Prompt Engineering: How to Ask AI the Right Questions for Amazing Answers",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
-      "part": 24,
-      "title": "Generative Adversarial Networks (GANs): The AI Art Forgers and Detectives",
-      "status": "complete",
-      "youtube_id": "QIPBSdIajoE"
+      "chapter": 5,
+      "part": 4,
+      "title": "Tokenization & Embeddings: AI Breaking Down Words and Finding Their Meaning",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
-      "part": 25,
-      "title": "Variational Autoencoders (VAEs): AI's Imagination Machine for Data Generation",
-      "status": "complete",
-      "youtube_id": "s24RqRCcaDs"
+      "chapter": 5,
+      "part": 5,
+      "title": "The Transformer: The AI Engine That Reads and Writes Like Never Before (Intro)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
-      "part": 26,
-      "title": "Diffusion Models: How AI Paints Realistic Pictures Step-by-Step",
-      "status": "complete",
-      "youtube_id": "N3ppzJSe448"
+      "chapter": 6,
+      "part": 1,
+      "title": "Attention Mechanism: How AI Chooses What to Focus On (Transformers Deep Dive)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
-      "part": 27,
-      "title": "Applying Diffusion Models: Creating Images, Videos, and 3D Assets with AI",
-      "status": "complete",
-      "youtube_id": "g-a8py-c7pI"
+      "chapter": 6,
+      "part": 2,
+      "title": "Fine-tuning LLMs: Turning a General AI into Your Expert Assistant",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
-      "part": 28,
-      "title": "AI Ethics & Bias: Ensuring Fairness and Avoiding Pitfalls in Our AI",
-      "status": "complete",
-      "youtube_id": "LMCEdSX9QS4"
+      "chapter": 6,
+      "part": 3,
+      "title": "Vector Databases: Storing and Finding AI's Memories in a Flash",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
-      "part": 29,
-      "title": "Explainable AI (XAI): Understanding Why Your AI Made That Decision",
-      "status": "complete",
-      "youtube_id": "CK6hmfLoGHY"
+      "chapter": 6,
+      "part": 4,
+      "title": "Retrieval Augmented Generation (RAG): AI That Uses Its Brain AND Its Books",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
-      "part": 30,
-      "title": "AI Safety & Alignment: Making Sure AI Works For Us, Not Against Us",
-      "status": "complete",
-      "youtube_id": "oNc6qAXquB4"
+      "chapter": 6,
+      "part": 5,
+      "title": "Building a RAG Application: Creating Your Own Smart AI Assistant with External Data",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
-      "part": 31,
-      "title": "MLOps Fundamentals: From Local Code to Production-Ready AI",
-      "status": "complete",
-      "youtube_id": "s_nVgOJEMnw"
+      "chapter": 7,
+      "part": 1,
+      "title": "Agent Frameworks: Giving Your AI a \"Brain\" and Tools to Think and Act",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
-      "part": 32,
-      "title": "Containerizing AI Applications: Packaging Your AI for Any Environment with Docker",
-      "status": "complete",
-      "youtube_id": "z-7zWXXAAn0"
+      "chapter": 7,
+      "part": 2,
+      "title": "Advanced Tool Use: Equipping Your AI with Custom Superpowers via LangChain",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
-      "part": 33,
-      "title": "Cloud Deployment for AI: Launching Your AI on AWS, Azure, or GCP",
-      "status": "complete",
-      "youtube_id": "nZ02Gro3K-4"
+      "chapter": 7,
+      "part": 3,
+      "title": "Agent Reasoning & Planning: How AI Breaks Down Problems and Solves Them Step-by-Step",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
-      "part": 34,
-      "title": "Monitoring & Maintaining AI in Production: Keeping Your AI Smart and Healthy",
-      "status": "complete",
-      "youtube_id": "-We1kKykXA4"
+      "chapter": 7,
+      "part": 4,
+      "title": "LangGraph: Designing AI That Thinks in Steps and Reacts to Changes",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
-      "part": 35,
-      "title": "Advanced Tool Creation for Agents: Equipping Your AI with Custom Superpowers",
-      "status": "complete",
-      "youtube_id": "Knd7Jr22sKk"
+      "chapter": 7,
+      "part": 5,
+      "title": "Building Complex Agent Applications: Orchestrating an AI Team for Big Projects",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
-      "part": 36,
-      "title": "Multi-Agent Systems: When AI Teams Collaborate to Solve Problems",
-      "status": "complete",
-      "youtube_id": "TsZb6GVSLg8"
+      "chapter": 8,
+      "part": 1,
+      "title": "RLHF: Teaching AI What We Really Want (The Secret Behind Amazing LLMs)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
-      "part": 37,
-      "title": "Agent Communication & Coordination: How AIs Talk and Team Up for Complex Tasks",
-      "status": "complete",
-      "youtube_id": "_nPmYfUN2CM"
+      "chapter": 8,
+      "part": 2,
+      "title": "Beyond the Transformer: Glimpsing AI's Next Brain Designs (Mixture of Experts)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
-      "part": 38,
-      "title": "Building a Multi-Agent Application: Designing a Collaborative AI Workforce",
-      "status": "complete",
-      "youtube_id": "jvitXxbXsO8"
+      "chapter": 8,
+      "part": 3,
+      "title": "Multi-Modal AI: AI That Understands More Than Just Words (Images, Audio, Video)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Efficient AI & Future Trends",
-      "part": 39,
-      "title": "Quantization & Pruning: Making AI Models Smaller, Faster, and Greener",
-      "status": "complete",
-      "youtube_id": "-JcCKF0myYY"
+      "chapter": 8,
+      "part": 4,
+      "title": "Designing Scalable AI Systems: Building AI That Can Grow with Your Ambitions",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Efficient AI & Future Trends",
-      "part": 40,
-      "title": "AI at the Edge: Bringing AI Intelligence Directly to Your Devices",
-      "status": "complete",
-      "youtube_id": "_tFENMBY8-o"
+      "chapter": 8,
+      "part": 5,
+      "title": "The Future of AI: What's Next for Autonomous Agents and Intelligent Systems",
+      "status": "pending",
+      "youtube_id": null
     }
   ]
 }
