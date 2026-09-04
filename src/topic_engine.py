@@ -11,15 +11,18 @@ def similarity(a,b):
     x,y=words(a),words(b); return len(x&y)/max(1,len(x|y))
 def topic_id(title): return hashlib.sha1(title.lower().encode()).hexdigest()[:12]
 def score(title, pillar):
-    intent = 90 if any(x in title.lower() for x in ("how to","checklist","mistakes","guide","fix")) else 72
-    return round(.25*intent + .20*88 + .20*92 + .15*80 + .10*85 + .10*82)
+    normalized = title.lower()
+    intent = 90 if any(x in normalized for x in ("how to", "checklist", "mistakes", "guide", "fix", "best", "why")) else 72
+    answer_intent = 92 if any(x in normalized for x in ("how to", "what", "why", "best", "checklist")) else 70
+    local_or_entity_intent = 88 if any(x in normalized for x in ("local", "small business", "wordpress", "shopify", "webflow")) else 68
+    return round(.25 * intent + .20 * 88 + .20 * 92 + .15 * answer_intent + .10 * local_or_entity_intent + .10 * 82)
 def candidates(existing):
     titles=[x.get("title","") for x in existing]
     result=[]
     for seed in SEEDS:
         if any(similarity(seed,t) >= .55 for t in titles+ [x["title"] for x in result]): continue
         pillar=next((p for p in PILLARS if any(k in seed.lower() for k in p.lower().split()[:2])), "Website design fundamentals")
-        result.append({"id":topic_id(seed),"title":seed,"pillar":pillar,"cluster":pillar.lower().replace(" ","-"),"format":"tutorial","difficulty":"beginner","search_intent":"practical solution","audience":"beginners, business owners and freelancers","evergreen_score":92,"demand_score":88,"problem_score":90,"monetization_score":84,"production_score":82,"priority_score":score(seed,pillar),"selection_reason":"Persistent website problem with clear search intent and actionable follow-up opportunities.","status":"pending","created_at":now(),"published_at":None,"youtube_id":None,"parent_topic_id":None,"related_topic_ids":[],"decay_score":0,"update_candidate":False})
+        result.append({"id":topic_id(seed),"title":seed,"pillar":pillar,"cluster":pillar.lower().replace(" ","-"),"format":"tutorial","difficulty":"beginner","search_intent":"practical solution","audience":"entrepreneurs, founders and service businesses","evergreen_score":92,"demand_score":88,"problem_score":90,"monetization_score":84,"production_score":82,"seo_score":88,"geo_score":78,"aeo_score":90,"priority_score":score(seed,pillar),"selection_reason":"Persistent business problem with search, answer and entity intent.","status":"pending","created_at":now(),"published_at":None,"youtube_id":None,"parent_topic_id":None,"related_topic_ids":[],"decay_score":0,"update_candidate":False})
     return result
 
 def archive_off_brand_topics(topics):

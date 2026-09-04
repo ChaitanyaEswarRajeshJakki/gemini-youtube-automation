@@ -32,7 +32,36 @@ def choose_topic():
 
 
 def generate_strategy(topic: dict) -> dict:
-    return {"topic": topic["title"], "pillar": topic["pillar"], "audience": topic["audience"], "reason": topic["selection_reason"], "priority_score": topic["priority_score"]}
+    return {"topic": topic["title"], "pillar": topic["pillar"], "audience": topic["audience"], "reason": topic["selection_reason"], "priority_score": topic["priority_score"], "seo_score": topic.get("seo_score", 0), "geo_score": topic.get("geo_score", 0), "aeo_score": topic.get("aeo_score", 0), "optimization_mix": config("channel.json").get("search_optimization_mix", {})}
+
+
+def _metadata_value(metadata: dict, key: str, fallback: str) -> str:
+    value = metadata.get(key, fallback)
+    if isinstance(value, list):
+        return ", ".join(str(item).strip() for item in value if str(item).strip())
+    return str(value).strip() or fallback
+
+
+def _format_tags(value: str) -> str:
+    tags = [tag.strip().lstrip("#") for tag in value.replace("\n", ",").split(",") if tag.strip()]
+    return ",".join(dict.fromkeys(tags))
+
+
+def _build_long_description(topic, content, channel, cta) -> str:
+    metadata = content.get("long_form_metadata", {})
+    keywords = content.get("seo_keywords", [])
+    questions = content.get("answer_questions", [])
+    entities = content.get("geo_entities", [])
+    answers = "\n".join(f"Q: {item.get('question', '')}\nA: {item.get('answer', '')}" for item in questions if isinstance(item, dict) and item.get("question") and item.get("answer"))
+    return "\n\n".join(filter(None, [
+        _metadata_value(metadata, "description", f"{topic['title']} explained for entrepreneurs and service businesses."),
+        f"{channel['brand_promise']} Learn what to change, why it matters, and how to apply it today.",
+        f"Free resource: {cta['lead_magnet']} at {cta.get('destination', 'https://web-designs.online')}",
+        f"Search topics: {', '.join(keywords[:10])}" if keywords else "",
+        f"Relevant context: {', '.join(entities[:6])}" if entities else "",
+        answers,
+        f"Subscribe to {channel['channel_name']} for practical website growth ideas.",
+    ]))
 
 
 def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
@@ -52,6 +81,10 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     if stage == "generate-script": return content
 
     unique_id = f"{topic['id']}_{now().replace(':', '').replace('+', '')[:15]}"
+    long_metadata = content.get("long_form_metadata", {})
+    long_title = _metadata_value(long_metadata, "title", topic["title"])[:100]
+    short_metadata = content.get("short_form_metadata", {})
+    short_title = _metadata_value(short_metadata, "title", f"{content.get('short_form_highlight', topic['title'])} #Shorts")[:100]
     hook = content.get(
         "hook",
         f"Most websites do not lose customers because they look terrible. They lose them because visitors do not know what to do next. Today we fix that.",
@@ -77,21 +110,27 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     paths = [generate_visuals(slide_dir, "long", slide_content=s, slide_number=i + 1, total_slides=len(slides)) for i, s in enumerate(slides)]
     video_path = OUTPUT_DIR / f"long_{unique_id}.mp4"
     create_video(paths, audio, video_path, "long")
-    thumb = generate_visuals(OUTPUT_DIR, "long", thumbnail_title=topic["title"])
+    thumb = generate_visuals(OUTPUT_DIR, "long", thumbnail_title=long_title)
     topic["status"] = "ready"; persist_topic(topic)
     if stage == "render": return str(video_path)
 
     from src.uploader import upload_to_youtube
-    description = (
-        f"{topic['title']}\n\n"
-        f"{channel['brand_promise']} This practical guide is for entrepreneurs, founders and service businesses that want more qualified enquiries from their website.\n\n"
-        f"You will learn what to change, why it matters and how to apply it today.\n\n"
-        f"Get the {cta['lead_magnet'].lower()}: {cta.get('destination', 'https://web-designs.online')}\n\n"
-        f"Subscribe to {channel['channel_name']} for practical website growth ideas."
-    )
-    video_id = upload_to_youtube(video_path, topic["title"], description, content.get("hashtags", "#webdesign #smallbusiness #conversionrateoptimization"), thumb)
-    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["published_at"] = now(); persist_topic(topic)
-    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "title": topic["title"]})
+    description = _build_long_description(topic, content, channel, cta)
+    long_tags = _format_tags(_metadata_value(long_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,conversionrateoptimization")))
+    video_id = upload_to_youtube(video_path, long_title, description, long_tags, thumb)
+
+    short_slide = {"title": short_title.replace(" #Shorts", ""), "content": content.get("short_form_highlight", payoff)}
+    short_audio_path = text_to_speech(short_slide["content"], OUTPUT_DIR / f"short_audio_{unique_id}.mp3")
+    short_slide_dir = OUTPUT_DIR / f"short_slides_{unique_id}"
+    short_slide_path = generate_visuals(short_slide_dir, "short", slide_content=short_slide, slide_number=1, total_slides=1)
+    short_video_path = OUTPUT_DIR / f"short_{unique_id}.mp4"
+    create_video([short_slide_path], [short_audio_path], short_video_path, "short")
+    short_thumb = generate_visuals(OUTPUT_DIR, "short", thumbnail_title=short_title.replace(" #Shorts", ""))
+    short_description = _metadata_value(short_metadata, "description", f"{content.get('short_form_highlight', payoff)} Learn more at https://web-designs.online")
+    short_tags = _format_tags(_metadata_value(short_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,Shorts")))
+    short_video_id = upload_to_youtube(short_video_path, short_title, short_description, short_tags, short_thumb)
+    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["short_youtube_id"] = short_video_id; topic["published_at"] = now(); persist_topic(topic)
+    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "short_youtube_id": short_video_id, "title": long_title})
     return video_id
 
 

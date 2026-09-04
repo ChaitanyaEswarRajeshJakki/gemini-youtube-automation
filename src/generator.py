@@ -226,8 +226,15 @@ def generate_lesson_content(lesson_title):
         2. "humorous_analogy": One short, friendly analogy or joke that makes the concept memorable without mocking the viewer.
         3. "payoff": A specific before/after result the viewer can achieve by applying the lesson.
         4. "long_form_slides": A list of 7 to 8 slide objects for a longer, more detailed main video. Each object needs a "title" and "content" key. Order them as: problem, stakes, anticipation, framework, example, checklist, payoff.
-        5. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
+        5. "short_form_highlight": A single, punchy, 1-2 sentence answer for a YouTube Short.
         6. "hashtags": A string of 5-7 relevant, space-separated hashtags focused on web design, small business and conversions.
+        7. "seo_keywords": A list of 8-12 natural search phrases people would type into YouTube or Google.
+        8. "geo_entities": A list of 3-6 relevant entities, platforms, industries or locations to establish topical context without inventing facts.
+        9. "answer_questions": A list of 3 concise questions and direct answers suitable for search snippets and AI answer engines.
+        10. "long_form_metadata": An object with "title", "description", and "tags" for the long-form upload. Put the primary phrase near the beginning and make the description useful, not keyword-stuffed.
+        11. "short_form_metadata": An object with "title", "description", and "tags" for the Short. Make the title curiosity-driven, under 100 characters, and include #Shorts.
+
+        Optimization balance: approximately 45% search phrase clarity, 25% entity and local context, and 30% direct-answer usefulness. SEO rules: use one primary phrase, related natural phrases, clear headings, and accurate claims. GEO rules: connect the advice to relevant businesses, platforms, and local intent only when supported by the topic. AEO rules: answer the main question in the first two sentences, then explain the why and how. Never stuff keywords or repeat the same phrase unnaturally.
 
         Return only valid JSON.
         """

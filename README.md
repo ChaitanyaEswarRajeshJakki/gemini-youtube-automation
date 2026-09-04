@@ -51,6 +51,8 @@ Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIEN
 
 Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gTTS as a fallback. Set `TTS_VOICE` or `TTS_RATE` in the workflow environment to switch voice or pacing. Spoken links are rendered as “web designs dot online”; clickable URLs remain in video descriptions.
 
+Each run automatically balances search optimization at approximately **45% SEO**, **25% GEO** (business, platform and local entities), and **30% AEO** (direct questions and answers). Gemini generates separate metadata for long-form videos and Shorts, including titles, descriptions, tags, search phrases and answer blocks. The pipeline renders and uploads both formats with separate thumbnails.
+
 Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
 The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.

@@ -16,5 +16,10 @@
   "default_video_style": "tutorial",
   "lead_magnet": "Free Website Conversion Checklist",
   "brand_promise": "Turn your website into your best salesperson.",
-  "primary_cta": "Get the free checklist at web-designs.online"
+  "primary_cta": "Get the free checklist at web-designs.online",
+  "search_optimization_mix": {
+    "seo": 0.45,
+    "geo": 0.25,
+    "aeo": 0.30
+  }
 }
