@@ -1,63 +1,101 @@
-"""Web Designs Online production CLI."""
+"""Web Designs Online production CLI with resumable, dry-run-first stages."""
 from __future__ import annotations
-import argparse, json, os, sys, traceback
+import argparse, json, sys, traceback
 from pathlib import Path
 from src.analytics import learn
 from src.quality import validate_content
 from src.repository import ensure_stores, load, save, append_history, now
 from src.topic_engine import replenish, select_next
-from src.uploader import upload_to_youtube
 
-OUTPUT_DIR=Path("output")
+ROOT = Path(__file__).resolve().parent
+OUTPUT_DIR = ROOT / "output"
 
-def config(name): return json.loads((Path("config") / name).read_text(encoding="utf-8"))
+
+def config(name: str):
+    return json.loads((ROOT / "config" / name).read_text(encoding="utf-8"))
+
+
+def persist_topic(topic: dict) -> None:
+    topics = load("topics", [])
+    for item in topics:
+        if item.get("id") == topic.get("id"):
+            item.update(topic)
+    save("topics", topics)
+
+
 def choose_topic():
-    topics=replenish(); topic=select_next(topics)
-    if not topic: raise RuntimeError("No pending topics available")
+    topics = replenish()
+    topic = select_next(topics)
+    if not topic:
+        raise RuntimeError("No pending topics available")
     return topics, topic
 
-def generate_strategy(topic):
-    return {"topic":topic["title"],"pillar":topic["pillar"],"audience":topic["audience"],"reason":topic["selection_reason"],"priority_score":topic["priority_score"]}
 
-def produce(topic, dry_run=False):
-    channel=config("channel.json"); OUTPUT_DIR.mkdir(exist_ok=True)
-    if not dry_run:
-        from src.generator import generate_lesson_content, text_to_speech, generate_visuals, create_video
-        from src.uploader import upload_to_youtube
+def generate_strategy(topic: dict) -> dict:
+    return {"topic": topic["title"], "pillar": topic["pillar"], "audience": topic["audience"], "reason": topic["selection_reason"], "priority_score": topic["priority_score"]}
+
+
+def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
+    channel = config("channel.json")
+    cta = config("cta.json")
+    OUTPUT_DIR.mkdir(exist_ok=True)
     if dry_run:
-        print(json.dumps(generate_strategy(topic),indent=2)); print("DRY RUN: no rendering, upload, or completion state mutation."); return None
-    topic["status"]="researching"; save("topics",load("topics",[]))
-    content=generate_lesson_content(topic["title"]); qa=validate_content(content); topic["qa_score"]=qa; topic["status"]="scripted"
-    unique_id=f"{topic['id']}_{now().replace(':','').replace('+','')[:15]}"
-    slides=[{"title":topic["title"],"content":"A practical guide for Web Designs Online."}]+content["long_form_slides"]
-    audio=[]
-    for i, slide in enumerate(slides): audio.append(text_to_speech(slide["content"],OUTPUT_DIR/f"audio_{unique_id}_{i}.mp3"))
-    topic["status"]="rendering"; save("topics",load("topics",[]))
-    slide_dir=OUTPUT_DIR/f"slides_{unique_id}"; paths=[generate_visuals(slide_dir,"long",s,i+1,len(slides)) for i,s in enumerate(slides)]
-    video_path=OUTPUT_DIR/f"long_{unique_id}.mp4"; create_video(paths,audio,video_path,"long")
-    thumb=generate_visuals(OUTPUT_DIR,"long",thumbnail_title=topic["title"])
-    topic["status"]="ready"; save("topics",load("topics",[]))
-    video_id=upload_to_youtube(video_path,topic["title"],f"{topic['title']}\n\n{channel['lead_magnet']}",content.get("hashtags","#WebDesign"),thumb)
-    if not video_id: raise RuntimeError("Upload did not return a video ID")
-    topic["status"]="published"; topic["youtube_id"]=video_id; topic["published_at"]=now()
-    topics=load("topics",[])
-    for item in topics:
-        if item.get("id")==topic["id"]: item.update(topic)
-    save("topics",topics); append_history({"event":"published","topic_id":topic["id"],"youtube_id":video_id,"title":topic["title"]})
+        print(json.dumps(generate_strategy(topic), indent=2))
+        print("DRY RUN: no network calls, rendering, upload, or completion-state mutation.")
+        return None
+
+    from src.generator import generate_lesson_content, text_to_speech, generate_visuals, create_video
+    topic["status"] = "researching"; persist_topic(topic)
+    content = generate_lesson_content(topic["title"])
+    topic["qa_score"] = validate_content(content)
+    topic["status"] = "scripted"; persist_topic(topic)
+    if stage == "generate-script": return content
+
+    unique_id = f"{topic['id']}_{now().replace(':', '').replace('+', '')[:15]}"
+    slides = [{"title": topic["title"], "content": f"A practical guide from {channel['channel_name']}."}] + content["long_form_slides"]
+    audio = [text_to_speech(slide["content"], OUTPUT_DIR / f"audio_{unique_id}_{i}.mp3") for i, slide in enumerate(slides)]
+    topic["status"] = "rendering"; persist_topic(topic)
+    slide_dir = OUTPUT_DIR / f"slides_{unique_id}"
+    paths = [generate_visuals(slide_dir, "long", slide_content=s, slide_number=i + 1, total_slides=len(slides)) for i, s in enumerate(slides)]
+    video_path = OUTPUT_DIR / f"long_{unique_id}.mp4"
+    create_video(paths, audio, video_path, "long")
+    thumb = generate_visuals(OUTPUT_DIR, "long", thumbnail_title=topic["title"])
+    topic["status"] = "ready"; persist_topic(topic)
+    if stage == "render": return str(video_path)
+
+    from src.uploader import upload_to_youtube
+    description = f"{topic['title']}\n\nPractical web design guidance from {channel['channel_name']}."
+    if cta.get("enabled") and cta.get("destination"):
+        description += f"\n\nFree resource: {cta['destination']}"
+    video_id = upload_to_youtube(video_path, topic["title"], description, content.get("hashtags", "#webdesign"), thumb)
+    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["published_at"] = now(); persist_topic(topic)
+    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "title": topic["title"]})
     return video_id
 
+
 def main():
-    parser=argparse.ArgumentParser(description="Web Designs Online YouTube automation")
-    parser.add_argument("--dry-run",action="store_true"); parser.add_argument("--generate-topic",action="store_true"); parser.add_argument("--analytics",action="store_true"); parser.add_argument("--learn",action="store_true"); parser.add_argument("--full",action="store_true")
-    parser.add_argument("--generate-script",metavar="TOPIC_ID"); parser.add_argument("--render",metavar="TOPIC_ID"); parser.add_argument("--upload",metavar="TOPIC_ID")
-    args=parser.parse_args(); ensure_stores()
-    if args.analytics or args.learn: print(json.dumps(learn(),indent=2,default=str)); return
-    topics,topic=choose_topic()
-    if args.generate_topic: print(json.dumps(topic,indent=2)); return
-    if args.generate_script or args.render or args.upload:
-        topic=next((x for x in topics if x.get("id")==next(v for v in (args.generate_script,args.render,args.upload) if v)),None)
+    parser = argparse.ArgumentParser(description="Web Designs Online YouTube automation")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--generate-topic", action="store_true")
+    parser.add_argument("--analytics", action="store_true")
+    parser.add_argument("--learn", action="store_true")
+    parser.add_argument("--full", action="store_true")
+    parser.add_argument("--generate-script", metavar="TOPIC_ID")
+    parser.add_argument("--render", metavar="TOPIC_ID")
+    parser.add_argument("--upload", metavar="TOPIC_ID")
+    args = parser.parse_args(); ensure_stores()
+    if args.analytics or args.learn:
+        print(json.dumps(learn(), indent=2, default=str)); return
+    topics, topic = choose_topic()
+    requested = args.generate_script or args.render or args.upload
+    if args.generate_topic:
+        print(json.dumps(topic, indent=2)); return
+    if requested:
+        topic = next((x for x in topics if x.get("id") == requested), None)
         if not topic: raise SystemExit("Topic ID not found")
-    produce(topic,args.dry_run or not args.full and bool(args.generate_script or args.render))
+    stage = "generate-script" if args.generate_script else "render" if args.render else "full"
+    produce(topic, dry_run=args.dry_run or (bool(requested) and not args.full), stage=stage)
+
 
 if __name__ == "__main__":
     try: main()
