@@ -66,10 +66,10 @@ def upload_to_youtube(video_path, title, description, tags, thumbnail_path=None)
                 'title': title,
                 'description': description,
                 'tags': tags.split(','),
-                'categoryId': '28' # 28 = Science & Technology
+                'categoryId': os.getenv('YOUTUBE_CATEGORY_ID', '26') # Howto & Style
             },
             'status': {
-                'privacyStatus': 'public', # 'private', 'public', or 'unlisted'
+                'privacyStatus': os.getenv('YOUTUBE_PRIVACY_STATUS', 'private'), # 'private', 'public', or 'unlisted'
                 'selfDeclaredMadeForKids': False
             }
         }

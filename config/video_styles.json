@@ -1,0 +1,8 @@
+{
+  "tutorial": {"tone":"clear, practical and encouraging","visual_density":"medium"},
+  "minimalist": {"tone":"focused and concise","visual_density":"low"},
+  "explainer": {"tone":"visual and analogy-driven","visual_density":"medium"},
+  "business": {"tone":"outcome-focused and credible","visual_density":"medium"},
+  "uiux": {"tone":"precise and design-literate","visual_density":"high"},
+  "teardown": {"tone":"observant, constructive and specific","visual_density":"high"}
+}

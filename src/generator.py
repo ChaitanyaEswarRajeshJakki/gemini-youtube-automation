@@ -21,7 +21,7 @@ ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
-YOUR_NAME = "Chaitanya"
+YOUR_NAME = "Web Designs Online"
 
 # Google's TTS endpoint throttles bursts from shared CI IPs. When it does, it answers
 # 200 OK with no audio stream, which gTTS surfaces as "Probable cause: Unknown".

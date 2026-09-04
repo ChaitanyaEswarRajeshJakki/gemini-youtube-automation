@@ -1,0 +1,17 @@
+{
+  "channel_name": "Web Designs Online",
+  "channel_url": "https://www.youtube.com/@Web-Designs-Online",
+  "niche": "practical web design, website creation, UI/UX, web development and website growth",
+  "audience": "beginners, business owners, freelancers, designers, developers, marketers and agencies",
+  "language": "English",
+  "country": "US",
+  "evergreen_ratio": 0.75,
+  "semi_evergreen_ratio": 0.15,
+  "trend_ratio": 0.10,
+  "long_form_enabled": true,
+  "shorts_enabled": true,
+  "publishing_mode": "private",
+  "default_category": "Howto & Style",
+  "default_video_style": "tutorial",
+  "lead_magnet": "Free Website Design Checklist"
+}
