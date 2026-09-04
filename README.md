@@ -4,7 +4,7 @@ A configurable Python pipeline for producing conversion-focused web-design video
 
 ## Safe rollout
 
-Use this order: **dry run → local private upload → GitHub Actions private upload → unlisted → public**. The default privacy mode is private. The system does not promise views, subscribers, revenue, or monetization.
+Use this order: **dry run → review artifacts → public upload**. The production workflow publishes completed videos publicly on the branch that triggered it. The system does not promise views, subscribers, revenue, or monetization.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ python main.py --generate-topic
 python main.py --full
 ```
 
-`--full` is the only command that renders and uploads. Uploads default to private. Set `YOUTUBE_PRIVACY_STATUS=unlisted` or `public` only after reviewing output.
+`--full` is the only command that renders and uploads. The production workflow sets `YOUTUBE_PRIVACY_STATUS=public`; set it to `private` or `unlisted` for a review run.
 
 ## Google and YouTube authorization
 
@@ -47,7 +47,7 @@ base64 -w 0 credentials.json > encoded_credentials.txt
 
 ## GitHub Actions
 
-Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. Run the workflow manually first. Inspect artifacts and confirm the YouTube video is private. The daily schedule is near 07:00 UTC and uses serialized concurrency.
+Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. The workflow can run from either `main` or `v0/web-designs-online-pipeline`; it checks out the triggering branch and publishes videos publicly. The daily schedule is near 07:00 UTC and uses serialized concurrency.
 
 Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 

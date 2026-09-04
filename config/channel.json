@@ -11,7 +11,7 @@
   "trend_ratio": 0.10,
   "long_form_enabled": true,
   "shorts_enabled": true,
-  "publishing_mode": "private",
+  "publishing_mode": "public",
   "default_category": "Howto & Style",
   "default_video_style": "tutorial",
   "lead_magnet": "Free Website Conversion Checklist",
