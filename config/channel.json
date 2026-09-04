@@ -1,8 +1,9 @@
 {
-  "channel_name": "Web Designs Online",
-  "channel_url": "https://www.youtube.com/@Web-Designs-Online",
-  "niche": "practical web design, website creation, UI/UX, web development and website growth",
-  "audience": "beginners, business owners, freelancers, designers, developers, marketers and agencies",
+  "channel_name": "web-designs.online",
+  "channel_url": "https://web-designs.online",
+  "youtube_url": "https://www.youtube.com/@Web-Designs-Online",
+  "niche": "conversion-focused websites that help entrepreneurs win trust, leads and sales",
+  "audience": "entrepreneurs, founders, local business owners, creators and service providers",
   "language": "English",
   "country": "US",
   "evergreen_ratio": 0.75,
@@ -13,5 +14,7 @@
   "publishing_mode": "private",
   "default_category": "Howto & Style",
   "default_video_style": "tutorial",
-  "lead_magnet": "Free Website Design Checklist"
+  "lead_magnet": "Free Website Conversion Checklist",
+  "brand_promise": "Turn your website into your best salesperson.",
+  "primary_cta": "Get the free checklist at web-designs.online"
 }

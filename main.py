@@ -1,4 +1,4 @@
-"""Web Designs Online production CLI with resumable, dry-run-first stages."""
+"""web-designs.online production CLI with resumable, dry-run-first stages."""
 from __future__ import annotations
 import argparse, json, sys, traceback
 from pathlib import Path
@@ -52,7 +52,7 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     if stage == "generate-script": return content
 
     unique_id = f"{topic['id']}_{now().replace(':', '').replace('+', '')[:15]}"
-    slides = [{"title": topic["title"], "content": f"A practical guide from {channel['channel_name']}."}] + content["long_form_slides"]
+    slides = [{"title": topic["title"], "content": f"A practical guide from {channel['channel_name']}: {channel['brand_promise']}"}] + content["long_form_slides"]
     audio = [text_to_speech(slide["content"], OUTPUT_DIR / f"audio_{unique_id}_{i}.mp3") for i, slide in enumerate(slides)]
     topic["status"] = "rendering"; persist_topic(topic)
     slide_dir = OUTPUT_DIR / f"slides_{unique_id}"
@@ -64,17 +64,21 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     if stage == "render": return str(video_path)
 
     from src.uploader import upload_to_youtube
-    description = f"{topic['title']}\n\nPractical web design guidance from {channel['channel_name']}."
-    if cta.get("enabled") and cta.get("destination"):
-        description += f"\n\nFree resource: {cta['destination']}"
-    video_id = upload_to_youtube(video_path, topic["title"], description, content.get("hashtags", "#webdesign"), thumb)
+    description = (
+        f"{topic['title']}\n\n"
+        f"{channel['brand_promise']} This practical guide is for entrepreneurs, founders and service businesses that want more qualified enquiries from their website.\n\n"
+        f"You will learn what to change, why it matters and how to apply it today.\n\n"
+        f"Get the {cta['lead_magnet'].lower()}: {cta.get('destination', 'https://web-designs.online')}\n\n"
+        f"Subscribe to {channel['channel_name']} for practical website growth ideas."
+    )
+    video_id = upload_to_youtube(video_path, topic["title"], description, content.get("hashtags", "#webdesign #smallbusiness #conversionrateoptimization"), thumb)
     topic["status"] = "published"; topic["youtube_id"] = video_id; topic["published_at"] = now(); persist_topic(topic)
     append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "title": topic["title"]})
     return video_id
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Web Designs Online YouTube automation")
+    parser = argparse.ArgumentParser(description="web-designs.online YouTube automation")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--generate-topic", action="store_true")
     parser.add_argument("--analytics", action="store_true")

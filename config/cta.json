@@ -1,6 +1,7 @@
 {
   "enabled": true,
-  "lead_magnet": "Free Website Design Checklist",
-  "destination": "",
-  "cta_style": "soft"
+  "enabled": true,
+  "lead_magnet": "Free Website Conversion Checklist",
+  "destination": "https://web-designs.online",
+  "cta_style": "direct-benefit"
 }

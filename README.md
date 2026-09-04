@@ -1,6 +1,6 @@
-# Web Designs Online YouTube Automation
+# web-designs.online YouTube Automation
 
-A configurable Python pipeline for producing practical web-design videos for [Web Designs Online](https://www.youtube.com/@Web-Designs-Online). It uses Gemini for topic/script generation, gTTS for narration, Pexels for visuals, MoviePy/FFmpeg for rendering, and the YouTube Data API for uploads.
+A configurable Python pipeline for producing conversion-focused web-design videos for [web-designs.online](https://web-designs.online). It uses Gemini for topic/script generation, gTTS for narration, Pexels for visuals, MoviePy/FFmpeg for rendering, and the YouTube Data API for uploads.
 
 ## Safe rollout
 

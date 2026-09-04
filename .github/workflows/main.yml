@@ -1,4 +1,4 @@
-name: Web Designs Online Production
+name: web-designs.online Production
 
 on:
   workflow_dispatch:

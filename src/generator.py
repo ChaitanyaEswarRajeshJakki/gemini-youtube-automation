@@ -1,5 +1,5 @@
 # FILE: src/generator.py
-# Web Designs Online renderer: per-slide audio sync with CI-safe fallbacks.
+# web-designs.online renderer: per-slide audio sync with CI-safe fallbacks.
 
 import os
 import json
@@ -21,8 +21,8 @@ ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
-YOUR_NAME = "Web Designs Online"
-CHANNEL_NAME = "Web Designs Online"
+YOUR_NAME = "web-designs.online"
+CHANNEL_NAME = "web-designs.online"
 DEFAULT_GEMINI_MODELS = (
     "gemini-3.6-flash",
     "gemini-2.5-flash-lite",
@@ -148,13 +148,12 @@ def generate_curriculum(previous_titles=None):
             history = f"The following lessons have already been created:\n{formatted}\n\nPlease continue from where this series left off.\n"
 
         prompt = f"""
-        You are an expert AI educator. Generate a curriculum for a YouTube series called 'Web Designs Online by {YOUR_NAME}'.
+        You are a conversion-focused web strategist creating a YouTube series for {CHANNEL_NAME}.
         {history}
-        The style must be: 'Assume the viewer is a beginner or non-technical person starting their journey into AI as a developer.
-        Use simple real-world analogies, relatable examples, and then connect to technical concepts.'
+        The audience is entrepreneurs, founders, local business owners, creators and service providers.
+        Focus on practical website decisions that help them earn trust, generate qualified enquiries and increase sales.
 
-        The curriculum must guide a developer from absolute beginner to advanced AI, covering foundations like Generative AI, LLMs, Vector Databases, and Agentic AI...
-        ...then continue into deep AI topics like Reinforcement Learning, Transformers internals, multi-agent systems, tool use, LangGraph, AI architecture, and more.
+        Build a useful sequence around positioning, homepage messaging, landing pages, offers, trust signals, SEO, mobile UX, speed, analytics and conversion optimization.
 
         Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 20 lesson objects.
         Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
@@ -175,14 +174,15 @@ def generate_lesson_content(lesson_title):
     try:
         client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
         prompt = f"""
-        You are creating a lesson for the 'Web Designs Online by {YOUR_NAME}' series. The topic is '{lesson_title}'.
-        The style is: Assume the viewer is a beginner developer or non-tech person who wants to learn AI from scratch.
-        Use analogies and clear, simple language. Each concept must be explained from a developer's perspective, assuming no prior AI or ML knowledge.
+        You are creating a practical lesson for the {CHANNEL_NAME} channel. The topic is '{lesson_title}'.
+        The audience is busy entrepreneurs who want a website that creates trust, enquiries and sales.
+        Use plain language, concrete examples and tactical advice. Explain the business reason behind every design decision.
+        Open with a compelling problem or missed-opportunity hook. Include an actionable checklist, a before/after example and a clear next step.
 
         Generate a JSON response with three keys:
         1. "long_form_slides": A list of 7 to 8 slide objects for a longer, more detailed main video. Each object needs a "title" and "content" key.
         2. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
-        3. "hashtags": A string of 5-7 relevant, space-separated hashtags for this lesson (e.g., "#GenerativeAI #LLM #Developer","#NeuralNetworks #BeginnerAI #AIforDevelopers").
+        3. "hashtags": A string of 5-7 relevant, space-separated hashtags focused on web design, small business and conversions.
 
         Return only valid JSON.
         """
@@ -265,7 +265,7 @@ def generate_lesson_content(lesson_title):
 
 #         footer_height = int(height * 0.06)
 #         draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
-#         draw.text((40, height - footer_height + 12), f"Web Designs Online by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
+#         draw.text((40, height - footer_height + 12), f"{CHANNEL_NAME}", font=footer_font, fill=(180, 180, 180))
 #         if total_slides > 0:
 #             slide_num_text = f"Slide {slide_number} of {total_slides}"
 #             slide_num_bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
@@ -371,7 +371,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
         # Footer
         footer_height = int(height * 0.06)
         draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
-        draw.text((40, height - footer_height + 12), f"Web Designs Online by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
+        draw.text((40, height - footer_height + 12), CHANNEL_NAME, font=footer_font, fill=(180, 180, 180))
 
         if total_slides > 0:
             slide_num_text = f"Slide {slide_number} of {total_slides}"
