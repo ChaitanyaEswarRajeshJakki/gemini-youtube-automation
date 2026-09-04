@@ -6,6 +6,7 @@ google-auth-oauthlib
 
 # Text-to-Speech and Video Editing
 gTTS
+edge-tts
 moviepy==1.0.3
 
 # For Pexels API

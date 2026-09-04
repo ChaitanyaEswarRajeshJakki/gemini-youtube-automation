@@ -69,7 +69,7 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
         {"title": "A Quick Reality Check", "content": humorous_analogy},
     ] + content["long_form_slides"] + [
         {"title": "The Conversion Payoff", "content": payoff},
-        {"title": "Make Your Website Work Harder", "content": f"Get the {cta['lead_magnet'].lower()} at {cta.get('destination', 'https://web-designs.online')}. New practical website growth ideas from {channel['channel_name']}."},
+        {"title": "Make Your Website Work Harder", "content": f"Get the {cta['lead_magnet'].lower()} at web-designs.online. New practical website growth ideas from {channel['channel_name']}."},
     ]
     audio = [text_to_speech(slide["content"], OUTPUT_DIR / f"audio_{unique_id}_{i}.mp3") for i, slide in enumerate(slides)]
     topic["status"] = "rendering"; persist_topic(topic)

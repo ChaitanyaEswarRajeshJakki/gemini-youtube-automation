@@ -49,6 +49,8 @@ base64 -w 0 credentials.json > encoded_credentials.txt
 
 Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. The workflow can run from either `main` or `v0/web-designs-online-pipeline`; it checks out the triggering branch and publishes videos publicly. The daily schedule is near 07:00 UTC and uses serialized concurrency.
 
+Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gTTS as a fallback. Set `TTS_VOICE` or `TTS_RATE` in the workflow environment to switch voice or pacing. Spoken links are rendered as “web designs dot online”; clickable URLs remain in video descriptions.
+
 Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
 The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.

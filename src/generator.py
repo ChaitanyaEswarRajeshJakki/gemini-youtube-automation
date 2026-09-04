@@ -5,11 +5,17 @@ import os
 import json
 import time
 import random
+import asyncio
+import re
 import requests
 from io import BytesIO
 from google import genai
 from gtts import gTTS
 from gtts.tts import gTTSError
+try:
+    import edge_tts
+except ImportError:
+    edge_tts = None
 from moviepy.editor import AudioFileClip, ImageClip, CompositeAudioClip, concatenate_videoclips, vfx
 from moviepy.config import change_settings
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -22,6 +28,9 @@ FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 BACKGROUND_MUSIC_VOLUME = 0.045
 VOICE_VOLUME = 1.2
+VOICE_NAME = os.getenv("TTS_VOICE", "en-US-JennyNeural")
+VOICE_RATE = os.getenv("TTS_RATE", "+5%")
+SPOKEN_SITE_NAME = "web designs dot online"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
 YOUR_NAME = "web-designs.online"
 CHANNEL_NAME = "web-designs.online"
@@ -84,15 +93,29 @@ def _throttle_tts():
 
 
 def text_to_speech(text, output_path):
-    """Converts text to speech using gTTS and ensures clean audio using WAV format."""
+    """Create warm, natural narration and normalize URLs for spoken delivery."""
     print(f"🎤 Converting script to speech...")
     temp_mp3_path = str(output_path).replace('.mp3', '_temp.mp3')
     wav_path = str(output_path.with_suffix('.wav'))
+    spoken_text = _prepare_spoken_text(text)
+
+    if edge_tts is not None:
+        try:
+            asyncio.run(_save_neural_voice(spoken_text, temp_mp3_path))
+            audio = AudioSegment.from_mp3(temp_mp3_path)
+            audio.export(wav_path, format="wav", codec="pcm_s16le")
+            os.remove(temp_mp3_path)
+            print(f"✅ Natural voice generated with {VOICE_NAME}.")
+            return Path(wav_path)
+        except Exception as error:
+            if os.path.exists(temp_mp3_path):
+                os.remove(temp_mp3_path)
+            print(f"⚠️ Neural voice unavailable ({error}); falling back to gTTS.")
 
     for attempt in range(1, TTS_MAX_ATTEMPTS + 1):
         try:
             _throttle_tts()
-            tts = gTTS(text=text, lang='en', slow=False)
+            tts = gTTS(text=spoken_text, lang='en', slow=False)
             tts.save(temp_mp3_path)
 
             # A throttled response can still produce a file — just an empty/truncated one.
@@ -117,6 +140,22 @@ def text_to_speech(text, output_path):
             delay = TTS_BACKOFF_SECONDS * (2 ** (attempt - 1)) + random.uniform(0, 2)
             print(f"⚠️ TTS attempt {attempt}/{TTS_MAX_ATTEMPTS} failed ({e}). Retrying in {delay:.1f}s...")
             time.sleep(delay)
+
+
+async def _save_neural_voice(text, output_path):
+    communicate = edge_tts.Communicate(text, VOICE_NAME, rate=VOICE_RATE)
+    await communicate.save(output_path)
+
+
+def _prepare_spoken_text(text):
+    """Make narration sound conversational while keeping URLs clickable elsewhere."""
+    spoken = str(text)
+    spoken = re.sub(r"https?://(?:www\.)?web-designs\.online/?", SPOKEN_SITE_NAME, spoken, flags=re.I)
+    spoken = spoken.replace("web-designs.online", SPOKEN_SITE_NAME)
+    spoken = spoken.replace("Web Designs Online", "web designs dot online")
+    spoken = re.sub(r"\bCTA\b", "call to action", spoken, flags=re.I)
+    spoken = re.sub(r"\s+", " ", spoken).strip()
+    return spoken
 
 
 def _generate_content(client, prompt):
@@ -180,6 +219,7 @@ def generate_lesson_content(lesson_title):
         The audience is busy entrepreneurs who want a website that creates trust, enquiries and sales.
         Use plain language, concrete examples and tactical advice. Explain the business reason behind every design decision.
         Open with a compelling problem or missed-opportunity hook. Build anticipation by teasing the most valuable change before explaining it. Use one light, relevant humorous analogy, then deliver a concrete before/after payoff and a clear next step.
+        Write for warm, natural spoken delivery by a confident female presenter: use contractions, short sentences and human phrasing. Do not use markdown, emojis, raw URLs, stage directions or robotic labels.
 
         Generate a JSON response with these keys:
         1. "hook": A punchy 1-2 sentence opening that creates curiosity and names the business cost of ignoring this problem.
