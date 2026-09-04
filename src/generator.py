@@ -20,6 +20,8 @@ from pydub import AudioSegment
 ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
 BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
+BACKGROUND_MUSIC_VOLUME = 0.045
+VOICE_VOLUME = 1.2
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
 YOUR_NAME = "web-designs.online"
 CHANNEL_NAME = "web-designs.online"
@@ -177,12 +179,15 @@ def generate_lesson_content(lesson_title):
         You are creating a practical lesson for the {CHANNEL_NAME} channel. The topic is '{lesson_title}'.
         The audience is busy entrepreneurs who want a website that creates trust, enquiries and sales.
         Use plain language, concrete examples and tactical advice. Explain the business reason behind every design decision.
-        Open with a compelling problem or missed-opportunity hook. Include an actionable checklist, a before/after example and a clear next step.
+        Open with a compelling problem or missed-opportunity hook. Build anticipation by teasing the most valuable change before explaining it. Use one light, relevant humorous analogy, then deliver a concrete before/after payoff and a clear next step.
 
-        Generate a JSON response with three keys:
-        1. "long_form_slides": A list of 7 to 8 slide objects for a longer, more detailed main video. Each object needs a "title" and "content" key.
-        2. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
-        3. "hashtags": A string of 5-7 relevant, space-separated hashtags focused on web design, small business and conversions.
+        Generate a JSON response with these keys:
+        1. "hook": A punchy 1-2 sentence opening that creates curiosity and names the business cost of ignoring this problem.
+        2. "humorous_analogy": One short, friendly analogy or joke that makes the concept memorable without mocking the viewer.
+        3. "payoff": A specific before/after result the viewer can achieve by applying the lesson.
+        4. "long_form_slides": A list of 7 to 8 slide objects for a longer, more detailed main video. Each object needs a "title" and "content" key. Order them as: problem, stakes, anticipation, framework, example, checklist, payoff.
+        5. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
+        6. "hashtags": A string of 5-7 relevant, space-separated hashtags focused on web design, small business and conversions.
 
         Return only valid JSON.
         """
@@ -290,6 +295,10 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     darken_layer = Image.new('RGBA', bg_image.size, (0, 0, 0, 150))
     final_bg = Image.alpha_composite(bg_image, darken_layer).convert("RGB")
 
+    # Add a high-contrast brand wash so text remains legible over every fetched image.
+    accent = Image.new("RGBA", final_bg.size, (7, 99, 102, 38))
+    final_bg = Image.alpha_composite(final_bg.convert("RGBA"), accent).convert("RGB")
+
     if is_thumbnail and video_type == 'long':
         w, h = final_bg.size
         if h > w:
@@ -336,6 +345,10 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
             y_text += line_height
     else:
         # Center title on thumbnail
+        badge = "web-designs.online"
+        badge_font = ImageFont.truetype(str(FONT_FILE), 34 if video_type == 'long' else 42)
+        draw.rounded_rectangle([55, 55, 520, 125], radius=18, fill=(7, 99, 102), outline=(255, 255, 255), width=2)
+        draw.text((82, 72), badge, font=badge_font, fill=(255, 255, 255))
         bbox = draw.textbbox((0, 0), title, font=title_font)
         x = (width - (bbox[2] - bbox[0])) / 2
         y = (height - (bbox[3] - bbox[1])) / 2
@@ -407,14 +420,14 @@ def create_video(slide_paths, audio_paths, output_path, video_type):
 
         if BACKGROUND_MUSIC_PATH.exists():
             print("🎵 Adding background music...")
-            bg_music = AudioFileClip(str(BACKGROUND_MUSIC_PATH)).volumex(0.05)
+            bg_music = AudioFileClip(str(BACKGROUND_MUSIC_PATH)).volumex(BACKGROUND_MUSIC_VOLUME)
             if bg_music.duration < final_video.duration:
                 bg_music = bg_music.fx(vfx.loop, duration=final_video.duration)
             else:
                 bg_music = bg_music.subclip(0, final_video.duration)
 
             composite_audio = CompositeAudioClip([
-                final_video.audio.volumex(1.2),
+                final_video.audio.volumex(VOICE_VOLUME),
                 bg_music
             ])
             final_video = final_video.set_audio(composite_audio)

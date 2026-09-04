@@ -52,7 +52,25 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     if stage == "generate-script": return content
 
     unique_id = f"{topic['id']}_{now().replace(':', '').replace('+', '')[:15]}"
-    slides = [{"title": topic["title"], "content": f"A practical guide from {channel['channel_name']}: {channel['brand_promise']}"}] + content["long_form_slides"]
+    hook = content.get(
+        "hook",
+        f"Most websites do not lose customers because they look terrible. They lose them because visitors do not know what to do next. Today we fix that.",
+    )
+    humorous_analogy = content.get(
+        "humorous_analogy",
+        "A confusing website is like a shop assistant who says hello, walks away, and hides the checkout.",
+    )
+    payoff = content.get(
+        "payoff",
+        f"Apply this lesson and give visitors a clearer path from first impression to enquiry. {channel['brand_promise']}",
+    )
+    slides = [
+        {"title": "The Costly Website Mistake", "content": hook},
+        {"title": "A Quick Reality Check", "content": humorous_analogy},
+    ] + content["long_form_slides"] + [
+        {"title": "The Conversion Payoff", "content": payoff},
+        {"title": "Make Your Website Work Harder", "content": f"Get the {cta['lead_magnet'].lower()} at {cta.get('destination', 'https://web-designs.online')}. New practical website growth ideas from {channel['channel_name']}."},
+    ]
     audio = [text_to_speech(slide["content"], OUTPUT_DIR / f"audio_{unique_id}_{i}.mp3") for i, slide in enumerate(slides)]
     topic["status"] = "rendering"; persist_topic(topic)
     slide_dir = OUTPUT_DIR / f"slides_{unique_id}"
