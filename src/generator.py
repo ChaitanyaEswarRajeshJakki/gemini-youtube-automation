@@ -23,7 +23,16 @@ BACKGROUND_MUSIC_PATH = ASSETS_PATH / "music/bg_music.mp3"
 FALLBACK_THUMBNAIL_FONT = ImageFont.load_default()
 YOUR_NAME = "Web Designs Online"
 CHANNEL_NAME = "Web Designs Online"
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+DEFAULT_GEMINI_MODELS = (
+    "gemini-3.6-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+)
+GEMINI_MODELS = tuple(
+    model.strip()
+    for model in os.getenv("GEMINI_MODELS", os.getenv("GEMINI_MODEL", "")).split(",")
+    if model.strip()
+) or DEFAULT_GEMINI_MODELS
 
 # Google's TTS endpoint throttles bursts from shared CI IPs. When it does, it answers
 # 200 OK with no audio stream, which gTTS surfaces as "Probable cause: Unknown".
@@ -108,6 +117,24 @@ def text_to_speech(text, output_path):
             time.sleep(delay)
 
 
+def _generate_content(client, prompt):
+    """Try configured Gemini models in order so one retired model does not stop production."""
+    last_error = None
+    for model in GEMINI_MODELS:
+        try:
+            print(f"🤖 Generating with {model}...")
+            response = client.models.generate_content(model=model, contents=prompt)
+            print(f"✅ Gemini model selected: {model}")
+            return response
+        except Exception as error:
+            last_error = error
+            print(f"⚠️ Gemini model {model} failed: {error}")
+
+    raise RuntimeError(
+        f"All configured Gemini models failed ({', '.join(GEMINI_MODELS)})."
+    ) from last_error
+
+
 def generate_curriculum(previous_titles=None):
     """Generates the entire course curriculum using Gemini."""
     print("🤖 No content plan found. Generating a new curriculum from scratch...")
@@ -132,7 +159,7 @@ def generate_curriculum(previous_titles=None):
         Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 20 lesson objects.
         Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
         """
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+        response = _generate_content(client, prompt)
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         curriculum = json.loads(json_string)
         print("✅ New curriculum generated successfully!")
@@ -159,7 +186,7 @@ def generate_lesson_content(lesson_title):
 
         Return only valid JSON.
         """
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+        response = _generate_content(client, prompt)
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         content = json.loads(json_string)
         print("✅ Lesson content generated successfully.")

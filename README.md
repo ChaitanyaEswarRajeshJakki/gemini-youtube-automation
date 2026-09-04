@@ -49,6 +49,8 @@ base64 -w 0 credentials.json > encoded_credentials.txt
 
 Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. Run the workflow manually first. Inspect artifacts and confirm the YouTube video is private. The daily schedule is near 07:00 UTC and uses serialized concurrency.
 
+Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
+
 The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.
 
 ## CLI
