@@ -362,14 +362,16 @@
     "production_score": 82,
     "priority_score": 87,
     "selection_reason": "Persistent website problem with clear search intent and actionable follow-up opportunities.",
-    "status": "pending",
+    "status": "published",
     "created_at": "2026-09-04T12:37:41.724569+00:00",
-    "published_at": null,
-    "youtube_id": null,
+    "published_at": "2026-09-05T08:54:43.112546+00:00",
+    "youtube_id": "oyulCTFaaDg",
     "parent_topic_id": null,
     "related_topic_ids": [],
     "decay_score": 0,
-    "update_candidate": false
+    "update_candidate": false,
+    "qa_score": 90,
+    "short_youtube_id": "P-BZUWlo8eQ"
   },
   {
     "id": "3967f8fca835",

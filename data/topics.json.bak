@@ -335,15 +335,16 @@
     "production_score": 82,
     "priority_score": 87,
     "selection_reason": "Persistent website problem with clear search intent and actionable follow-up opportunities.",
-    "status": "ready",
+    "status": "published",
     "created_at": "2026-09-04T12:37:41.724425+00:00",
-    "published_at": null,
-    "youtube_id": null,
+    "published_at": "2026-09-04T22:26:09.699430+00:00",
+    "youtube_id": "33qFs7ooMdU",
     "parent_topic_id": null,
     "related_topic_ids": [],
     "decay_score": 0,
     "update_candidate": false,
-    "qa_score": 90
+    "qa_score": 90,
+    "short_youtube_id": "m6TMX2Tpi6M"
   },
   {
     "id": "849a62ac30ae",
@@ -361,14 +362,15 @@
     "production_score": 82,
     "priority_score": 87,
     "selection_reason": "Persistent website problem with clear search intent and actionable follow-up opportunities.",
-    "status": "pending",
+    "status": "ready",
     "created_at": "2026-09-04T12:37:41.724569+00:00",
     "published_at": null,
     "youtube_id": null,
     "parent_topic_id": null,
     "related_topic_ids": [],
     "decay_score": 0,
-    "update_candidate": false
+    "update_candidate": false,
+    "qa_score": 90
   },
   {
     "id": "3967f8fca835",
