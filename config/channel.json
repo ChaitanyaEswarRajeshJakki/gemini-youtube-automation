@@ -1,0 +1,25 @@
+{
+  "channel_name": "web-designs.online",
+  "channel_url": "https://web-designs.online",
+  "youtube_url": "https://www.youtube.com/@Web-Designs-Online",
+  "niche": "conversion-focused websites that help entrepreneurs win trust, leads and sales",
+  "audience": "entrepreneurs, founders, local business owners, creators and service providers",
+  "language": "English",
+  "country": "US",
+  "evergreen_ratio": 0.75,
+  "semi_evergreen_ratio": 0.15,
+  "trend_ratio": 0.10,
+  "long_form_enabled": true,
+  "shorts_enabled": true,
+  "publishing_mode": "public",
+  "default_category": "Howto & Style",
+  "default_video_style": "tutorial",
+  "lead_magnet": "Free Website Conversion Checklist",
+  "brand_promise": "Turn your website into your best salesperson.",
+  "primary_cta": "Get the free checklist at web-designs.online",
+  "search_optimization_mix": {
+    "seo": 0.45,
+    "geo": 0.25,
+    "aeo": 0.30
+  }
+}

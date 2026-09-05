@@ -1,124 +1,63 @@
-name: Autonomous AI Course Generator
+name: web-designs.online Production
 
 on:
-  schedule:
-    - cron: '0 7 * * *' # 12:30 PM IST daily
   workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
 
-# A run takes far longer than the gap between a manual dispatch and the daily
-# schedule, so serialise them — two runs pushing to main race each other.
 concurrency:
-  group: ${{ github.workflow }}
+  group: youtube-production
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-deploy:
+  produce:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    timeout-minutes: 30
     steps:
-      - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
         with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: 📦 Install dependencies and patch ImageMagick
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg imagemagick
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Restore OAuth files
+        env:
+          CLIENT_SECRET_B64: ${{ secrets.CLIENT_SECRET_B64 }}
+          CREDENTIALS_B64: ${{ secrets.CREDENTIALS_B64 }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick ffmpeg
-          POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
-          if [ -z "$POLICY_FILE" ]; then
-            echo "❌ CRITICAL: Could not find ImageMagick's policy.xml file!"
-            exit 1
-          fi
-          echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
-          sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16384"\/>/' "$POLICY_FILE"
-          sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16384"\/>/' "$POLICY_FILE"
-
-          echo "--- Installing Python packages ---"
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          echo "✅ Dependencies installed."
-
-      - name: 🔑 Restore API credentials from base64
-        run: |
-          echo "${{ secrets.CLIENT_SECRET_B64 }}" | base64 -d > client_secrets.json
-          echo "${{ secrets.CREDENTIALS_B64 }}" | base64 -d > credentials.json
-        shell: bash
-
-      - name: 🚀 Run Autonomous Production Pipeline
-        id: production-run
+          echo "$CLIENT_SECRET_B64" | base64 --decode > client_secrets.json
+          echo "$CREDENTIALS_B64" | base64 --decode > credentials.json
+      - name: Produce public video
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-        run: python main.py
-
-      - name: 🔎 Upload Audio Artifact for Debugging
+          GEMINI_MODELS: gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash
+          YOUTUBE_PRIVACY_STATUS: public
+        run: python main.py --full
+      - name: Upload production artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: audio-debug-files
-          path: output/*.wav
-
-      - name: 🎥 Upload Final Video for Debugging
+          name: web-designs-online-production
+          path: |
+            output/*.mp4
+            output/*.wav
+          if-no-files-found: warn
+      - name: Commit generated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data config output || true
+          git diff --cached --quiet || git commit -m "chore: update channel production state"
+          git push
+      - name: Remove credentials
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: final-videos
-          path: output/*.mp4
-
-      - name: 🎞️ Generate demo GIF from latest video
-        if: steps.production-run.outcome == 'success'
-        run: |
-          VIDEO=$(ls output/long_video_*.mp4 2>/dev/null | head -n 1)
-          if [ -n "$VIDEO" ]; then
-            echo "✅ Found video: $VIDEO — converting to GIF..."
-            ffmpeg -y -ss 0 -t 12 -i "$VIDEO" \
-              -filter_complex "[0:v] fps=8,scale=320:-1:flags=lanczos,split [a][b];[a] palettegen [p];[b][p] paletteuse" \
-              images/demo.gif
-            echo "✅ Demo GIF created at images/demo.gif"
-          else
-            echo "⚠️ No long video found in output/, skipping GIF creation."
-          fi
-
-      - name: 💾 Commit and push content plan and demo GIF
-        if: steps.production-run.outcome == 'success'
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # The production run takes long enough that main can move on beneath us,
-          # which makes a plain push a non-fast-forward. Both files are generated
-          # artifacts, so replay this run's copies onto whatever main is now.
-          STAGING=$(mktemp -d)
-          cp content_plan.json "$STAGING/"
-          if [ -f images/demo.gif ]; then cp images/demo.gif "$STAGING/"; fi
-
-          for attempt in 1 2 3; do
-            git fetch origin main
-            git reset --hard origin/main
-
-            cp "$STAGING/content_plan.json" content_plan.json
-            if [ -f "$STAGING/demo.gif" ]; then cp "$STAGING/demo.gif" images/demo.gif; fi
-
-            git add content_plan.json images/demo.gif
-            if git diff --cached --quiet; then
-              echo "✅ Nothing to commit — main is already up to date."
-              exit 0
-            fi
-
-            git commit -m "feat: Update content plan and demo GIF after daily video production"
-            if git push; then
-              echo "✅ Pushed on attempt $attempt."
-              exit 0
-            fi
-            echo "⚠️ Push rejected on attempt $attempt — main moved again, retrying..."
-          done
-
-          echo "❌ Could not push after 3 attempts."
-          exit 1
+        run: rm -f client_secrets.json credentials.json

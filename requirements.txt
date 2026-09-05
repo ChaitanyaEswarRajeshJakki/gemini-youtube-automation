@@ -6,13 +6,15 @@ google-auth-oauthlib
 
 # Text-to-Speech and Video Editing
 gTTS
+edge-tts
 moviepy==1.0.3
 
 # For Pexels API
 requests
 
 # For image processing (e.g., slides, thumbnails)
-Pillow==9.5.0
+Pillow>=10.4.0
 
 # ✅ For MP3 to WAV conversion
 pydub
+pytest>=8.0

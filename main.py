@@ -1,232 +1,163 @@
-import os
-import re
-import sys
-import json
-import datetime
-import time
-import traceback
+"""web-designs.online production CLI with resumable, dry-run-first stages."""
+from __future__ import annotations
+import argparse, json, sys, traceback
 from pathlib import Path
-from src.generator import (
-    generate_curriculum,
-    generate_lesson_content,
-    text_to_speech,
-    generate_visuals,
-    create_video,
-    YOUR_NAME
-)
-from src.uploader import upload_to_youtube
+from src.analytics import learn
+from src.quality import validate_content
+from src.repository import ensure_stores, load, save, append_history, now
+from src.topic_engine import replenish, select_next
 
-CONTENT_PLAN_FILE = Path("content_plan.json")
-OUTPUT_DIR = Path("output")
-LESSONS_PER_RUN = 1
-
-def get_content_plan():
-    if not CONTENT_PLAN_FILE.exists():
-        print("📄 content_plan.json not found. Generating new plan...")
-        new_plan = generate_curriculum()
-        with open(CONTENT_PLAN_FILE, 'w') as f:
-            json.dump(new_plan, f, indent=2)
-        print(f"✅ New curriculum saved to {CONTENT_PLAN_FILE}")
-        return new_plan
-    else:
-        try:
-            with open(CONTENT_PLAN_FILE, 'r') as f:
-                plan = json.load(f)
-            if not plan.get("lessons") or not isinstance(plan["lessons"], list):
-                raise ValueError("⚠️ Invalid or empty lesson plan detected.")
-            return plan
-        except Exception as e:
-            print(f"❌ ERROR loading existing plan: {e}. Regenerating...")
-            new_plan = generate_curriculum()
-            with open(CONTENT_PLAN_FILE, 'w') as f:
-                json.dump(new_plan, f, indent=2)
-            return new_plan
+ROOT = Path(__file__).resolve().parent
+OUTPUT_DIR = ROOT / "output"
 
 
-def update_content_plan(plan):
-    with open(CONTENT_PLAN_FILE, 'w') as f:
-        json.dump(plan, f, indent=2)
+def config(name: str):
+    return json.loads((ROOT / "config" / name).read_text(encoding="utf-8"))
 
 
+def persist_topic(topic: dict) -> None:
+    topics = load("topics", [])
+    for item in topics:
+        if item.get("id") == topic.get("id"):
+            item.update(topic)
+    save("topics", topics)
 
-def produce_lesson_videos(lesson):
-    print(f"\n▶️ Starting production for Lesson: '{lesson['title']}'")
-    chapter_safe = re.sub(r'[^\w]', '_', str(lesson['chapter'])).strip('_')
-    part_safe = re.sub(r'[^\w]', '_', str(lesson['part'])).strip('_')
-    unique_id = f"{datetime.datetime.now().strftime('%Y%m%d')}_{chapter_safe}_{part_safe}"
 
-    lesson_content = generate_lesson_content(lesson['title'])
+def choose_topic():
+    topics = replenish()
+    topic = select_next(topics)
+    if not topic:
+        raise RuntimeError("No pending topics available")
+    return topics, topic
 
-    print("\n--- Producing Long-Form Video ---")
 
-    intro_slide = {"title": lesson['title'], "content": f"Chapter {lesson['chapter']} | Part {lesson['part']}"}
-    outro_slide = {"title": "Thanks for Watching!", "content": "Like, Share & Subscribe for more daily AI content!\n#AIforDevelopers"}
-    all_slides = [intro_slide] + lesson_content['long_form_slides'] + [outro_slide]
+def generate_strategy(topic: dict) -> dict:
+    return {"topic": topic["title"], "pillar": topic["pillar"], "audience": topic["audience"], "reason": topic["selection_reason"], "priority_score": topic["priority_score"], "seo_score": topic.get("seo_score", 0), "geo_score": topic.get("geo_score", 0), "aeo_score": topic.get("aeo_score", 0), "optimization_mix": config("channel.json").get("search_optimization_mix", {})}
 
-    slide_scripts = [
-        f"Hello and welcome to AI for Developers. I'm {YOUR_NAME} talking bot. Today’s lesson is titled {lesson['title']}.",
-        *[s['content'] for s in lesson_content['long_form_slides']],
-        "Thanks for watching! If you found this helpful, make sure to subscribe to our channel and hit the like button."
+
+def _metadata_value(metadata: dict, key: str, fallback: str) -> str:
+    value = metadata.get(key, fallback)
+    if isinstance(value, list):
+        return ", ".join(str(item).strip() for item in value if str(item).strip())
+    return str(value).strip() or fallback
+
+
+def _format_tags(value: str) -> str:
+    tags = [tag.strip().lstrip("#") for tag in value.replace("\n", ",").split(",") if tag.strip()]
+    return ",".join(dict.fromkeys(tags))
+
+
+def _build_long_description(topic, content, channel, cta) -> str:
+    metadata = content.get("long_form_metadata", {})
+    keywords = content.get("seo_keywords", [])
+    questions = content.get("answer_questions", [])
+    entities = content.get("geo_entities", [])
+    answers = "\n".join(f"Q: {item.get('question', '')}\nA: {item.get('answer', '')}" for item in questions if isinstance(item, dict) and item.get("question") and item.get("answer"))
+    return "\n\n".join(filter(None, [
+        _metadata_value(metadata, "description", f"{topic['title']} explained for entrepreneurs and service businesses."),
+        f"{channel['brand_promise']} Learn what to change, why it matters, and how to apply it today.",
+        f"Free resource: {cta['lead_magnet']} at {cta.get('destination', 'https://web-designs.online')}",
+        f"Search topics: {', '.join(keywords[:10])}" if keywords else "",
+        f"Relevant context: {', '.join(entities[:6])}" if entities else "",
+        answers,
+        f"Subscribe to {channel['channel_name']} for practical website growth ideas.",
+    ]))
+
+
+def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
+    channel = config("channel.json")
+    cta = config("cta.json")
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    if dry_run:
+        print(json.dumps(generate_strategy(topic), indent=2))
+        print("DRY RUN: no network calls, rendering, upload, or completion-state mutation.")
+        return None
+
+    from src.generator import generate_lesson_content, text_to_speech, generate_visuals, create_video
+    topic["status"] = "researching"; persist_topic(topic)
+    content = generate_lesson_content(topic["title"])
+    topic["qa_score"] = validate_content(content)
+    topic["status"] = "scripted"; persist_topic(topic)
+    if stage == "generate-script": return content
+
+    unique_id = f"{topic['id']}_{now().replace(':', '').replace('+', '')[:15]}"
+    long_metadata = content.get("long_form_metadata", {})
+    long_title = _metadata_value(long_metadata, "title", topic["title"])[:100]
+    short_metadata = content.get("short_form_metadata", {})
+    short_title = _metadata_value(short_metadata, "title", f"{content.get('short_form_highlight', topic['title'])} #Shorts")[:100]
+    hook = content.get(
+        "hook",
+        f"Most websites do not lose customers because they look terrible. They lose them because visitors do not know what to do next. Today we fix that.",
+    )
+    humorous_analogy = content.get(
+        "humorous_analogy",
+        "A confusing website is like a shop assistant who says hello, walks away, and hides the checkout.",
+    )
+    payoff = content.get(
+        "payoff",
+        f"Apply this lesson and give visitors a clearer path from first impression to enquiry. {channel['brand_promise']}",
+    )
+    slides = [
+        {"title": "The Costly Website Mistake", "content": hook},
+        {"title": "A Quick Reality Check", "content": humorous_analogy},
+    ] + content["long_form_slides"] + [
+        {"title": "The Conversion Payoff", "content": payoff},
+        {"title": "Make Your Website Work Harder", "content": f"Get the {cta['lead_magnet'].lower()} at web-designs.online. New practical website growth ideas from {channel['channel_name']}."},
     ]
+    audio = [text_to_speech(slide["content"], OUTPUT_DIR / f"audio_{unique_id}_{i}.mp3") for i, slide in enumerate(slides)]
+    topic["status"] = "rendering"; persist_topic(topic)
+    slide_dir = OUTPUT_DIR / f"slides_{unique_id}"
+    paths = [generate_visuals(slide_dir, "long", slide_content=s, slide_number=i + 1, total_slides=len(slides)) for i, s in enumerate(slides)]
+    video_path = OUTPUT_DIR / f"long_{unique_id}.mp4"
+    create_video(paths, audio, video_path, "long")
+    thumb = generate_visuals(OUTPUT_DIR, "long", thumbnail_title=long_title)
+    topic["status"] = "ready"; persist_topic(topic)
+    if stage == "render": return str(video_path)
 
-    slide_audio_paths = []
-    for i, script in enumerate(slide_scripts):
-        audio_path = OUTPUT_DIR / f"audio_slide_{i+1}_{unique_id}.mp3"
-        wav_path = text_to_speech(script, audio_path)
-        slide_audio_paths.append(wav_path)
-    print(f"🎧 Total slide audios: {len(slide_audio_paths)}")
+    from src.uploader import upload_to_youtube
+    description = _build_long_description(topic, content, channel, cta)
+    long_tags = _format_tags(_metadata_value(long_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,conversionrateoptimization")))
+    video_id = upload_to_youtube(video_path, long_title, description, long_tags, thumb)
 
-    slide_dir = OUTPUT_DIR / f"slides_long_{unique_id}"
-    slide_paths = []
-    for i, slide in enumerate(all_slides):
-        path = generate_visuals(
-            output_dir=slide_dir,
-            video_type='long',
-            slide_content=slide,
-            slide_number=i + 1,
-            total_slides=len(all_slides)
-        )
-        slide_paths.append(path)
-
-    long_video_path = OUTPUT_DIR / f"long_video_{unique_id}.mp4"
-    print(f"🎥 Creating long-form video at: {long_video_path}")
-    create_video(slide_paths, slide_audio_paths, long_video_path, 'long')
-
-    long_thumb_path = generate_visuals(
-        output_dir=OUTPUT_DIR,
-        video_type='long',
-        thumbnail_title=lesson['title']
-    )
-
-    print("\n--- Producing Short Video ---")
-    # short_script = f"{lesson_content['short_form_highlight']}"
-    short_script = (f"{lesson_content['short_form_highlight']}\n\n"
-    f"Link to the full lesson is in the description below.")
-    short_audio_mp3_path = OUTPUT_DIR / f"short_audio_{unique_id}.mp3"
-    short_audio_path = text_to_speech(short_script, short_audio_mp3_path)
-
-    short_slide_dir = OUTPUT_DIR / f"slides_short_{unique_id}"
-    short_slide_content = {
-        "title": "Quick Tip!",
-        "content": f"{lesson_content['short_form_highlight']}\n\n#AI for developers by chaitanya"
-    }
-    short_slide_path = generate_visuals(
-        output_dir=short_slide_dir,
-        video_type='short',
-        slide_content=short_slide_content,
-        slide_number=1,
-        total_slides=1
-    )
-
-    short_video_path = OUTPUT_DIR / f"short_video_{unique_id}.mp4"
-    print(f"🎥 Creating short video at: {short_video_path}")
-    create_video([short_slide_path], [short_audio_path], short_video_path, 'short')
-
-    short_thumb_path = generate_visuals(
-        output_dir=OUTPUT_DIR,
-        video_type='short',
-        thumbnail_title=f"Quick Tip: {lesson['title']}"
-    )
-
-    print("\n📤 Uploading to YouTube...")
-    hashtags = lesson_content.get("hashtags", "#AI #Developer #LearnAI")
-    long_desc = f"Part of the 'AI for Developers' series by {YOUR_NAME}.\n\nToday's Lesson: {lesson['title']}\n\n{hashtags}"
-    long_tags = "AI, Artificial Intelligence, Developer, Programming, Tutorial, " + lesson['title'].replace(" ", ", ")
-
-    long_video_id = upload_to_youtube(
-        long_video_path,
-        lesson['title'],
-        long_desc,
-        long_tags,
-        long_thumb_path
-    )
-
-    if long_video_id:
-        print("⏳ Waiting 30 seconds before uploading the short...")
-        time.sleep(30)
-        highlight = (lesson_content.get('short_form_highlight') or '').strip()
-        if not highlight:
-            highlight = f"AI Quick Tip: {lesson['title']}"
-        short_title = f"{highlight[:90].rstrip()} #Shorts"
-        # short_desc = f"Watch the full lesson with {YOUR_NAME} here: https://www.youtube.com/watch?v={long_video_id}\n\n#AI #Programming #Tech #Developer"
-        short_desc = (f"{lesson_content['short_form_highlight']}\n\n"
-                      f"Watch the full lesson with {YOUR_NAME} here: https://www.youtube.com/watch?v={long_video_id}\n\n"
-                      f"{hashtags}")
-        upload_to_youtube(
-            short_video_path,
-            short_title.strip(),
-            short_desc,
-            "AI,Shorts,TechTip",
-            short_thumb_path
-        )
-        return long_video_id
-    return None
+    short_slide = {"title": short_title.replace(" #Shorts", ""), "content": content.get("short_form_highlight", payoff)}
+    short_audio_path = text_to_speech(short_slide["content"], OUTPUT_DIR / f"short_audio_{unique_id}.mp3")
+    short_slide_dir = OUTPUT_DIR / f"short_slides_{unique_id}"
+    short_slide_path = generate_visuals(short_slide_dir, "short", slide_content=short_slide, slide_number=1, total_slides=1)
+    short_video_path = OUTPUT_DIR / f"short_{unique_id}.mp4"
+    create_video([short_slide_path], [short_audio_path], short_video_path, "short")
+    short_thumb = generate_visuals(OUTPUT_DIR, "short", thumbnail_title=short_title.replace(" #Shorts", ""))
+    short_description = _metadata_value(short_metadata, "description", f"{content.get('short_form_highlight', payoff)} Learn more at https://web-designs.online")
+    short_tags = _format_tags(_metadata_value(short_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,Shorts")))
+    short_video_id = upload_to_youtube(short_video_path, short_title, short_description, short_tags, short_thumb)
+    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["short_youtube_id"] = short_video_id; topic["published_at"] = now(); persist_topic(topic)
+    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "short_youtube_id": short_video_id, "title": long_title})
+    return video_id
 
 
 def main():
-    print("🚀 Starting Autonomous AI Course Generator")
-    print(f"📁 Current working dir: {os.getcwd()}")
-    print(f"📁 OUTPUT_DIR: {OUTPUT_DIR.resolve()}")
+    parser = argparse.ArgumentParser(description="web-designs.online YouTube automation")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--generate-topic", action="store_true")
+    parser.add_argument("--analytics", action="store_true")
+    parser.add_argument("--learn", action="store_true")
+    parser.add_argument("--full", action="store_true")
+    parser.add_argument("--generate-script", metavar="TOPIC_ID")
+    parser.add_argument("--render", metavar="TOPIC_ID")
+    parser.add_argument("--upload", metavar="TOPIC_ID")
+    args = parser.parse_args(); ensure_stores()
+    if args.analytics or args.learn:
+        print(json.dumps(learn(), indent=2, default=str)); return
+    topics, topic = choose_topic()
+    requested = args.generate_script or args.render or args.upload
+    if args.generate_topic:
+        print(json.dumps(topic, indent=2)); return
+    if requested:
+        topic = next((x for x in topics if x.get("id") == requested), None)
+        if not topic: raise SystemExit("Topic ID not found")
+    stage = "generate-script" if args.generate_script else "render" if args.render else "full"
+    produce(topic, dry_run=args.dry_run or (bool(requested) and not args.full), stage=stage)
 
-    try:
-        OUTPUT_DIR.mkdir(exist_ok=True)
-        print(f"📁 Created output folder: {OUTPUT_DIR.exists()}")
-        plan = get_content_plan()
-        pending = [(i, lesson) for i, lesson in enumerate(plan['lessons']) if lesson['status'] == 'pending']
-
-        if not pending:
-            print("🎉 All lessons produced! Generating new content plan to restart from scratch...")
-
-            previous_titles = [lesson['title'] for lesson in plan['lessons']]
-            new_plan = generate_curriculum(previous_titles=previous_titles)  # 🔁 Pass prior titles
-            update_content_plan(new_plan)
-            plan = new_plan
-            pending = [(i, lesson) for i, lesson in enumerate(new_plan['lessons']) if lesson['status'] == 'pending']
-            if not pending:
-                print("⚠️ Curriculum generated but no valid lessons found.")
-                return
-
-        failed_lessons = []
-        for lesson_index, lesson in pending[:LESSONS_PER_RUN]:
-            try:
-                video_id = produce_lesson_videos(lesson)
-                if video_id:
-                    for original_lesson in plan['lessons']:
-                        if original_lesson['title'].strip().lower() == lesson['title'].strip().lower():
-                            original_lesson['status'] = 'complete'
-                            original_lesson['youtube_id'] = video_id
-                            print(f"✅ Completed lesson: {lesson['title']}")
-                            break
-                    else:
-                        print(f"⚠️ Could not find lesson in plan to mark as complete: {lesson['title']}")
-                else:
-                    print(f"❌ Upload failed (no video ID returned): {lesson['title']}")
-                    failed_lessons.append(lesson['title'])
-            except Exception as e:
-                print(f"❌ Failed producing lesson: {lesson['title']}")
-                traceback.print_exc()
-                failed_lessons.append(lesson['title'])
-            finally:
-                update_content_plan(plan)
-                print("📦 Content plan saved.")
-
-        if failed_lessons:
-            print(f"\n❌ PIPELINE FAILED — {len(failed_lessons)} lesson(s) did not complete:")
-            for title in failed_lessons:
-                print(f"   - {title}")
-            sys.exit(1)
-
-    except Exception as e:
-        print("❌ Critical error in main()")
-        traceback.print_exc()
-        sys.exit(1)
-
-    try:
-        for file in OUTPUT_DIR.glob("*.wav"):
-            file.unlink()
-            print(f"🧹 Deleted: {file}")
-    except Exception as e:
-        print(f"⚠️ Could not clean up .wav files: {e}")
 
 if __name__ == "__main__":
-    main()
+    try: main()
+    except Exception: traceback.print_exc(); sys.exit(1)

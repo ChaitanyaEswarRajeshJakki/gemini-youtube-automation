@@ -1,178 +1,94 @@
-<h1 align="center">🤖 Gemini YouTube Automation</h1>
+# web-designs.online YouTube Automation
 
-<p align="center">
-  <b>A fully autonomous AI bot that writes, produces, and uploads YouTube lessons daily — zero human input required.</b>
-</p>
+A configurable Python pipeline for producing conversion-focused web-design videos for [web-designs.online](https://web-designs.online). It uses Gemini for topic/script generation, gTTS for narration, Pexels for visuals, MoviePy/FFmpeg for rendering, and the YouTube Data API for uploads.
 
-<p align="center">
-  <a href="https://github.com/ChaitanyaEswarRajeshJakki/gemini-youtube-automation/actions/workflows/main.yml">
-    <img src="https://github.com/ChaitanyaEswarRajeshJakki/gemini-youtube-automation/actions/workflows/main.yml/badge.svg" alt="Daily Pipeline">
-  </a>
-  <img src="https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white" alt="Python 3.11">
-  <img src="https://img.shields.io/badge/powered%20by-Gemini%202.5-orange?logo=google&logoColor=white" alt="Gemini 2.5">
-  <img src="https://img.shields.io/github/stars/ChaitanyaEswarRajeshJakki/gemini-youtube-automation?style=social" alt="Stars">
-  <img src="https://img.shields.io/github/last-commit/ChaitanyaEswarRajeshJakki/gemini-youtube-automation" alt="Last Commit">
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
-</p>
+## Safe rollout
 
-<p align="center">
-  <a href="https://www.youtube.com/@ChaitanyaEswarRajeshJakki/videos">📺 Watch the Generated Videos on YouTube</a>
-</p>
+Use this order: **dry run → review artifacts → public upload**. The production workflow publishes completed videos publicly on the branch that triggered it. The system does not promise views, subscribers, revenue, or monetization.
 
----
+## Architecture
 
-## Demo
+- `config/`: channel, pillars, CTA and video style settings.
+- `src/repository.py`: atomic JSON persistence, backups and legacy migration.
+- `src/topic_engine.py`: niche topics, deterministic scoring, deduplication and queue replenishment.
+- `src/generator.py`: Gemini, Pexels, narration and video rendering.
+- `src/quality.py`: script quality firewall.
+- `src/uploader.py`: OAuth upload with configurable category and privacy.
+- `src/analytics.py`: non-blocking analytics snapshots and winner review.
+- `data/`: runtime topics, videos, analytics, experiments and immutable history.
+- `.github/workflows/main.yml`: scheduled automation.
 
-![Demo — AI-generated lesson video](images/demo.gif)
+## Prerequisites
 
-[![Watch on YouTube](https://img.shields.io/badge/▶%20Watch%20on%20YouTube-red?logo=youtube&logoColor=white&style=for-the-badge)](https://www.youtube.com/@ChaitanyaEswarRajeshJakki/videos)
-
----
-
-## What It Does
-
-Every day at **7:00 AM UTC**, this bot runs entirely on GitHub Actions and:
-
-1. **Reads** the content plan to pick the next pending lesson
-2. **Writes** a full multi-slide script using Gemini 2.5 Flash
-3. **Generates** narration audio (gTTS) and fetches Pexels background imagery
-4. **Renders** a professional slide-based video (1920×1080) with background music
-5. **Renders** a vertical YouTube Short (1080×1920) from the same lesson
-6. **Creates** a custom thumbnail for each format
-7. **Uploads** both videos to YouTube with titles, descriptions, and hashtags
-8. **Updates** `content_plan.json` and commits it back to the repo
-
-No local machine. No manual steps. Every video in the channel was made by this pipeline.
-
----
-
-## How It Works
-
-```text
-GitHub Actions Scheduler (7 AM UTC)
-          │
-          ▼
-  ┌───────────────────┐
-  │  content_plan.json │  ◄── picks next "pending" lesson
-  └────────┬──────────┘
-           │
-           ▼
-  ┌─────────────────────────────────┐
-  │  Gemini 2.5 Flash               │
-  │  • 7–8 slide lesson script      │
-  │  • 1-sentence YouTube Short     │
-  │  • hashtags + metadata          │
-  └────────┬────────────────────────┘
-           │
-           ▼
-  ┌──────────────────────────────────────┐
-  │  Video Renderer (MoviePy + PIL)      │
-  │  • gTTS narration per slide          │
-  │  • Pexels background images          │
-  │  • Background music mix              │
-  │  • Long-form (16:9) + Short (9:16)   │
-  └────────┬─────────────────────────────┘
-           │
-           ▼
-  ┌────────────────────────┐
-  │  YouTube Data API v3   │  ◄── uploads with thumbnails
-  └────────┬───────────────┘
-           │
-           ▼
-  ┌────────────────────────┐
-  │  git commit + push     │  ◄── marks lesson "complete"
-  └────────────────────────┘
-```
-
----
-
-## Features
-
-- **Zero-touch operation** — fully autonomous, runs on a cron schedule
-- **Dual-format output** — long-form lesson video AND a YouTube Short per day
-- **AI-generated curriculum** — Gemini creates and extends the course plan automatically
-- **Dynamic visuals** — Pexels stock imagery matched to each slide topic
-- **Professional audio** — per-slide narration with soft background music
-- **Custom thumbnails** — auto-generated for every video
-- **Self-updating repo** — content plan committed back after each successful run
-- **GitHub Actions native** — no server, no hosting cost, just free CI runners
-
----
-
-## Tech Stack
-
-| Component | Technology |
-| --- | --- |
-| AI Script Generation | Google Gemini 2.5 Flash |
-| Text-to-Speech | gTTS |
-| Video Rendering | MoviePy + FFmpeg |
-| Image Generation | Pillow (PIL) + ImageMagick |
-| Stock Footage | Pexels API |
-| YouTube Upload | YouTube Data API v3 |
-| Automation | GitHub Actions |
-
----
-
-## Setup
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/ChaitanyaEswarRajeshJakki/gemini-youtube-automation.git
-cd gemini-youtube-automation
-```
-
-### 2. Install dependencies
+Python 3.11, FFmpeg, ImageMagick, a Google AI Studio API key, a Pexels key, and a YouTube OAuth client configured for the YouTube Data API v3.
 
 ```bash
 pip install -r requirements.txt
+python main.py --dry-run
+python main.py --generate-topic
+python main.py --full
 ```
 
-### 3. Configure GitHub Secrets
+`--full` is the only command that renders and uploads. The production workflow sets `YOUTUBE_PRIVACY_STATUS=public`; set it to `private` or `unlisted` for a review run.
 
-Go to **Settings → Secrets and variables → Actions** and add:
+## Google and YouTube authorization
 
-| Secret | Description |
-| --- | --- |
-| `GOOGLE_API_KEY` | Gemini API key from Google AI Studio |
-| `PEXELS_API_KEY` | Pexels API key |
-| `CLIENT_SECRET_B64` | YouTube OAuth `client_secrets.json` encoded in base64 |
-| `CREDENTIALS_B64` | YouTube OAuth `credentials.json` encoded in base64 |
-
-### 4. Run locally
+1. Create/select a Google Cloud project.
+2. Enable YouTube Data API v3.
+3. Configure an OAuth consent screen and add your Google account as a test user if required.
+4. Create a Desktop OAuth client and download it as `client_secrets.json`.
+5. Run `python main.py --full` locally once. Approve access in the browser; this creates `credentials.json`.
+6. Base64 encode both JSON files without committing them:
 
 ```bash
-python main.py
+base64 -w 0 client_secrets.json > encoded_client_secret.txt
+base64 -w 0 credentials.json > encoded_credentials.txt
 ```
 
----
+## GitHub Actions
 
-## Content Progress
+Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. The workflow can run from either `main` or `v0/web-designs-online-pipeline`; it checks out the triggering branch and publishes videos publicly. The daily schedule is near 07:00 UTC and uses serialized concurrency.
 
-The bot is currently producing the **"AI for Developers"** series — a beginner-friendly course that takes developers from zero to advanced AI.
+Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gTTS as a fallback. Set `TTS_VOICE` or `TTS_RATE` in the workflow environment to switch voice or pacing. Spoken links are rendered as “web designs dot online”; clickable URLs remain in video descriptions.
 
-Topics covered include: Generative AI, LLMs, Prompt Engineering, RAG, Vector Databases, LangGraph, Fine-tuning, Computer Vision, and more.
+Each run automatically balances search optimization at approximately **45% SEO**, **25% GEO** (business, platform and local entities), and **30% AEO** (direct questions and answers). Gemini generates separate metadata for long-form videos and Shorts, including titles, descriptions, tags, search phrases and answer blocks. The pipeline renders and uploads both formats with separate thumbnails.
 
-Track progress live in [content_plan.json](content_plan.json).
+Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
----
+The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.
 
-## Daily Production Infographic
+## CLI
 
-![Daily Report Infographic](images/infographic.png)
+```bash
+python main.py --dry-run
+python main.py --generate-topic
+python main.py --generate-script TOPIC_ID
+python main.py --render TOPIC_ID
+python main.py --upload TOPIC_ID
+python main.py --analytics
+python main.py --learn
+python main.py --full
+```
 
----
+Stage-specific commands are safe planning entry points; use `--full` for the complete render/upload path. Existing `content_plan.json` is migrated into `data/topics.json` on first run.
 
-## Star History
+## Content strategy
 
-[![Star History Chart](https://api.star-history.com/svg?repos=ChaitanyaEswarRajeshJakki/gemini-youtube-automation&type=Date)](https://star-history.com/#ChaitanyaEswarRajeshJakki/gemini-youtube-automation&Date)
+The configured pillars cover landing pages, UI/UX, responsive design, HTML/CSS, JavaScript, WordPress, Webflow, Framer, Shopify, accessibility, SEO, performance, CRO, AI-assisted creation, freelancing and agency systems. The queue replenishes before it empties and rejects near-duplicate titles.
 
----
+## Troubleshooting
 
-## Contributing
+- Missing `GOOGLE_API_KEY`: configure it locally or as an Actions secret.
+- Missing OAuth files: complete the authorization steps above.
+- FFmpeg/ImageMagick errors: install both binaries and verify they are on `PATH`.
+- Empty Pexels results: the renderer intentionally falls back to a solid background.
+- Upload failures: the topic remains incomplete; rerun after fixing credentials.
+- Analytics failures do not block production.
 
-Contributions are welcome. Open an issue or submit a pull request.
+## Security and limitations
+
+Secrets remain outside source control. JSON is suitable for a single serialized GitHub Actions worker; move to a database adapter for concurrent multi-worker production. Generated content still requires human review for factual accuracy, accessibility, copyright and platform-policy compliance.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License.
