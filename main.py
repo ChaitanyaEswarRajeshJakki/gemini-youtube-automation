@@ -64,6 +64,20 @@ def _build_long_description(topic, content, channel, cta) -> str:
     ]))
 
 
+def _short_variants(content, payoff):
+    variants = content.get("short_form_variants", [])
+    if isinstance(variants, list):
+        variants = [item for item in variants if isinstance(item, dict) and item.get("script")]
+    if len(variants) >= 3:
+        return variants[:3]
+    fallback = content.get("short_form_highlight", payoff)
+    return [
+        {"angle": "mistake", "script": fallback, "title": f"The website mistake costing you leads #Shorts", "description": fallback, "tags": "webdesign,websiteleads,Shorts"},
+        {"angle": "quick win", "script": f"Quick win: {fallback}", "title": f"A 30-second website conversion win #Shorts", "description": f"A quick website improvement for entrepreneurs. {fallback}", "tags": "conversionrateoptimization,smallbusiness,Shorts"},
+        {"angle": "before-after", "script": f"Before: visitors feel stuck. After: they know exactly what to do. {fallback}", "title": f"Before and after: make your website convert #Shorts", "description": f"See the before-and-after website principle. {fallback}", "tags": "websiteaudit,entrepreneur,Shorts"},
+    ]
+
+
 def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     channel = config("channel.json")
     cta = config("cta.json")
@@ -119,18 +133,27 @@ def produce(topic: dict, dry_run: bool = False, stage: str = "full"):
     long_tags = _format_tags(_metadata_value(long_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,conversionrateoptimization")))
     video_id = upload_to_youtube(video_path, long_title, description, long_tags, thumb)
 
-    short_slide = {"title": short_title.replace(" #Shorts", ""), "content": content.get("short_form_highlight", payoff)}
-    short_audio_path = text_to_speech(short_slide["content"], OUTPUT_DIR / f"short_audio_{unique_id}.mp3")
-    short_slide_dir = OUTPUT_DIR / f"short_slides_{unique_id}"
-    short_slide_path = generate_visuals(short_slide_dir, "short", slide_content=short_slide, slide_number=1, total_slides=1)
-    short_video_path = OUTPUT_DIR / f"short_{unique_id}.mp4"
-    create_video([short_slide_path], [short_audio_path], short_video_path, "short")
-    short_thumb = generate_visuals(OUTPUT_DIR, "short", thumbnail_title=short_title.replace(" #Shorts", ""))
-    short_description = _metadata_value(short_metadata, "description", f"{content.get('short_form_highlight', payoff)} Learn more at https://web-designs.online")
-    short_tags = _format_tags(_metadata_value(short_metadata, "tags", content.get("hashtags", "webdesign,smallbusiness,Shorts")))
-    short_video_id = upload_to_youtube(short_video_path, short_title, short_description, short_tags, short_thumb)
-    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["short_youtube_id"] = short_video_id; topic["published_at"] = now(); persist_topic(topic)
-    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "short_youtube_id": short_video_id, "title": long_title})
+    short_video_ids = []
+    for short_index, variant in enumerate(_short_variants(content, payoff), start=1):
+        variant_title = str(variant.get("title", f"{topic['title']} - quick win"))
+        if "#shorts" not in variant_title.lower():
+            variant_title = f"{variant_title.rstrip()} #Shorts"
+        variant_title = variant_title[:100].rstrip()
+        short_script = str(variant["script"])
+        short_slide = {"title": variant_title.replace(" #Shorts", ""), "content": short_script}
+        short_audio_path = text_to_speech(short_script, OUTPUT_DIR / f"short_audio_{unique_id}_{short_index}.mp3")
+        short_slide_dir = OUTPUT_DIR / f"short_slides_{unique_id}_{short_index}"
+        short_slide_path = generate_visuals(short_slide_dir, "short", slide_content=short_slide, slide_number=1, total_slides=1)
+        short_video_path = OUTPUT_DIR / f"short_{unique_id}_{short_index}.mp4"
+        create_video([short_slide_path], [short_audio_path], short_video_path, "short")
+        short_thumb_dir = OUTPUT_DIR / f"short_thumbnail_{unique_id}_{short_index}"
+        short_thumb = generate_visuals(short_thumb_dir, "short", thumbnail_title=variant_title.replace(" #Shorts", ""))
+        short_description = str(variant.get("description", short_script))
+        short_description += f"\n\nWatch the full lesson: https://www.youtube.com/watch?v={video_id}\nGet the free checklist: https://web-designs.online"
+        short_tags = _format_tags(str(variant.get("tags", content.get("hashtags", "webdesign,smallbusiness,Shorts"))))
+        short_video_ids.append(upload_to_youtube(short_video_path, variant_title, short_description, short_tags, short_thumb))
+    topic["status"] = "published"; topic["youtube_id"] = video_id; topic["short_youtube_ids"] = short_video_ids; topic["published_at"] = now(); persist_topic(topic)
+    append_history({"event": "published", "topic_id": topic["id"], "youtube_id": video_id, "short_youtube_ids": short_video_ids, "title": long_title})
     return video_id
 
 

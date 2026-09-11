@@ -53,6 +53,8 @@ Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gT
 
 Each run automatically balances search optimization at approximately **45% SEO**, **25% GEO** (business, platform and local entities), and **30% AEO** (direct questions and answers). Gemini generates separate metadata for long-form videos and Shorts, including titles, descriptions, tags, search phrases and answer blocks. The pipeline renders and uploads both formats with separate thumbnails.
 
+The autopilot publishes one long-form lesson and three distinct Shorts per run: a mistake angle, a quick win, and a before-and-after angle. Each Short has its own title, description, tags, thumbnail and link back to the long lesson. Titles and opening hooks share one viewer promise, while the Shorts provide separate recommendation entry points without duplicate wording or clickbait.
+
 Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
 The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.

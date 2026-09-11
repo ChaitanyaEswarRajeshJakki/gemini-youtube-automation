@@ -15,7 +15,7 @@ permissions:
 jobs:
   produce:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,6 +50,8 @@ jobs:
           path: |
             output/*.mp4
             output/*.wav
+            output/**/*.mp4
+            output/**/*.wav
           if-no-files-found: warn
       - name: Commit generated state
         run: |
