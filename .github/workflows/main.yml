@@ -3,7 +3,8 @@ name: web-designs.online Production
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *"
+    # Three topic clusters per week: Monday, Wednesday and Friday at 07:00 UTC.
+    - cron: "0 7 * * 1,3,5"
 
 concurrency:
   group: youtube-production

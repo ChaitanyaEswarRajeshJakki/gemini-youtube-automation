@@ -47,7 +47,7 @@ base64 -w 0 credentials.json > encoded_credentials.txt
 
 ## GitHub Actions
 
-Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. The workflow can run from either `main` or `v0/web-designs-online-pipeline`; it checks out the triggering branch and publishes videos publicly. The daily schedule is near 07:00 UTC and uses serialized concurrency.
+Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIENT_SECRET_B64`, and `CREDENTIALS_B64`. The workflow can run from either `main` or `v0/web-designs-online-pipeline`; it checks out the triggering branch and publishes videos publicly. The scheduled cadence is Monday, Wednesday and Friday at 07:00 UTC, with manual dispatch available between runs. Serialized concurrency prevents overlapping production jobs.
 
 Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gTTS as a fallback. Set `TTS_VOICE` or `TTS_RATE` in the workflow environment to switch voice or pacing. Spoken links are rendered as “web designs dot online”; clickable URLs remain in video descriptions.
 
@@ -55,7 +55,7 @@ Each run automatically balances search optimization at approximately **45% SEO**
 
 The topic autopilot covers website growth and related digital marketing: content calendars, email sequences, social content, local discovery, brand messaging, lead generation, marketing funnels, analytics, paid acquisition and e-commerce marketing. It rotates practical angles so the channel can serve entrepreneurs across the full path from attention to conversion.
 
-The autopilot publishes one long-form lesson and three distinct Shorts per run: a mistake angle, a quick win, and a before-and-after angle. Each Short has its own title, description, tags, thumbnail and link back to the long lesson. Titles and opening hooks share one viewer promise, while the Shorts provide separate recommendation entry points without duplicate wording or clickbait.
+The autopilot publishes one long-form lesson and three distinct Shorts per run: a mistake angle, a quick win, and a before-and-after angle. At three scheduled runs per week, that creates three focused topic clusters, three long-form lessons, and nine supporting Shorts. Each Short has its own title, description, tags, thumbnail and link back to the long lesson. Titles and opening hooks share one viewer promise, while the Shorts provide separate recommendation entry points without duplicate wording or clickbait.
 
 Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
