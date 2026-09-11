@@ -36,8 +36,7 @@ YOUR_NAME = "web-designs.online"
 CHANNEL_NAME = "web-designs.online"
 DEFAULT_GEMINI_MODELS = (
     "gemini-3.6-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-2.0-flash",
+    "gemini-3.5-flash-lite",
 )
 GEMINI_MODELS = tuple(
     model.strip()
@@ -50,6 +49,8 @@ GEMINI_MODELS = tuple(
 TTS_MAX_ATTEMPTS = 5
 TTS_BACKOFF_SECONDS = 5
 TTS_MIN_GAP_SECONDS = 2
+MODEL_RETRY_ATTEMPTS = 3
+MODEL_RETRY_BACKOFF_SECONDS = 4
 _last_tts_request = 0.0
 
 # GitHub Actions compatibility for ImageMagick
@@ -159,17 +160,25 @@ def _prepare_spoken_text(text):
 
 
 def _generate_content(client, prompt):
-    """Try configured Gemini models in order so one retired model does not stop production."""
+    """Retry transient Gemini failures, then switch to the next configured model."""
     last_error = None
     for model in GEMINI_MODELS:
-        try:
-            print(f"🤖 Generating with {model}...")
-            response = client.models.generate_content(model=model, contents=prompt)
-            print(f"✅ Gemini model selected: {model}")
-            return response
-        except Exception as error:
-            last_error = error
-            print(f"⚠️ Gemini model {model} failed: {error}")
+        for attempt in range(1, MODEL_RETRY_ATTEMPTS + 1):
+            try:
+                print(f"🤖 Generating with {model} (attempt {attempt}/{MODEL_RETRY_ATTEMPTS})...")
+                response = client.models.generate_content(model=model, contents=prompt)
+                print(f"✅ Gemini model selected: {model}")
+                return response
+            except Exception as error:
+                last_error = error
+                error_text = str(error)
+                transient = any(code in error_text for code in ("429", "500", "502", "503", "504", "UNAVAILABLE", "RESOURCE_EXHAUSTED"))
+                print(f"⚠️ Gemini model {model} failed: {error}")
+                if not transient or attempt == MODEL_RETRY_ATTEMPTS:
+                    break
+                delay = MODEL_RETRY_BACKOFF_SECONDS * attempt + random.uniform(0, 2)
+                print(f"⏳ Retrying {model} in {delay:.1f}s...")
+                time.sleep(delay)
 
     raise RuntimeError(
         f"All configured Gemini models failed ({', '.join(GEMINI_MODELS)})."

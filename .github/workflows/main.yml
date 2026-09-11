@@ -37,10 +37,11 @@ jobs:
           echo "$CLIENT_SECRET_B64" | base64 --decode > client_secrets.json
           echo "$CREDENTIALS_B64" | base64 --decode > credentials.json
       - name: Produce public video
+        id: production-run
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-          GEMINI_MODELS: gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash
+          GEMINI_MODELS: gemini-3.6-flash,gemini-3.5-flash-lite
           YOUTUBE_PRIVACY_STATUS: public
         run: python main.py --full
       - name: Upload production artifacts
@@ -55,12 +56,13 @@ jobs:
             output/**/*.wav
           if-no-files-found: warn
       - name: Commit generated state
+        if: steps.production-run.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data config output || true
           git diff --cached --quiet || git commit -m "chore: update channel production state"
-          git push
+          git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Remove credentials
         if: always()
         run: rm -f client_secrets.json credentials.json

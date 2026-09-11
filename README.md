@@ -57,7 +57,7 @@ The topic autopilot covers website growth and related digital marketing: content
 
 The autopilot publishes one long-form lesson and three distinct Shorts per run: a mistake angle, a quick win, and a before-and-after angle. At three scheduled runs per week, that creates three focused topic clusters, three long-form lessons, and nine supporting Shorts. Each Short has its own title, description, tags, thumbnail and link back to the long lesson. Titles and opening hooks share one viewer promise, while the Shorts provide separate recommendation entry points without duplicate wording or clickbait.
 
-Gemini generation uses an ordered free-model fallback list so a retired or quota-limited model does not interrupt the production run. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-2.5-flash-lite,gemini-2.0-flash`. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
+Gemini generation uses an ordered model fallback list with transient-error retries. The workflow sets `GEMINI_MODELS` to `gemini-3.6-flash,gemini-3.5-flash-lite`; each model is retried for temporary 429/5xx capacity errors before the next model is tried. To change the order or use other models available to the API key, set `GEMINI_MODELS` as a comma-separated environment variable. `GEMINI_MODEL` remains supported for a single-model override.
 
 The workflow must have permission to commit generated JSON state. Never print secrets or commit OAuth files. Adjust the channel, CTA, pillars, and publishing mode in `config/` rather than editing Python source.
 
