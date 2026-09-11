@@ -38,6 +38,7 @@ DEFAULT_GEMINI_MODELS = (
     "gemini-3.6-flash",
     "gemini-3.5-flash-lite",
 )
+DISCOVER_GEMINI_MODELS = os.getenv("GEMINI_DISCOVER_MODELS", "true").lower() == "true"
 GEMINI_MODELS = tuple(
     model.strip()
     for model in os.getenv("GEMINI_MODELS", os.getenv("GEMINI_MODEL", "")).split(",")
@@ -159,10 +160,36 @@ def _prepare_spoken_text(text):
     return spoken
 
 
+def _model_candidates(client):
+    candidates = list(GEMINI_MODELS)
+    if not DISCOVER_GEMINI_MODELS:
+        return candidates
+
+    try:
+        discovered = []
+        for model in client.models.list():
+            name = str(getattr(model, "name", "")).removeprefix("models/")
+            actions = getattr(model, "supported_actions", None) or []
+            if not name.startswith("gemini-") or (actions and "generateContent" not in actions):
+                continue
+            discovered.append(name)
+
+        discovered.sort(key=lambda name: ("flash-lite" not in name, "flash" not in name, name))
+        for model in discovered:
+            if model not in candidates:
+                candidates.append(model)
+        print(f"🔎 Available Gemini generation models: {', '.join(discovered) or 'none discovered'}")
+    except Exception as error:
+        print(f"⚠️ Could not discover Gemini models; using configured fallbacks: {error}")
+
+    return candidates
+
+
 def _generate_content(client, prompt):
-    """Retry transient Gemini failures, then switch to the next configured model."""
+    """Retry transient failures, then switch across configured and available models."""
     last_error = None
-    for model in GEMINI_MODELS:
+    candidates = _model_candidates(client)
+    for model in candidates:
         for attempt in range(1, MODEL_RETRY_ATTEMPTS + 1):
             try:
                 print(f"🤖 Generating with {model} (attempt {attempt}/{MODEL_RETRY_ATTEMPTS})...")
@@ -181,7 +208,7 @@ def _generate_content(client, prompt):
                 time.sleep(delay)
 
     raise RuntimeError(
-        f"All configured Gemini models failed ({', '.join(GEMINI_MODELS)})."
+        f"All available Gemini models failed ({', '.join(candidates)})."
     ) from last_error
 
 

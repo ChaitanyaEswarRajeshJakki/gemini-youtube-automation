@@ -42,6 +42,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           GEMINI_MODELS: gemini-3.6-flash,gemini-3.5-flash-lite
+          GEMINI_DISCOVER_MODELS: "true"
           YOUTUBE_PRIVACY_STATUS: public
         run: python main.py --full
       - name: Upload production artifacts
