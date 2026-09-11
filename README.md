@@ -1,6 +1,6 @@
 # web-designs.online YouTube Automation
 
-A configurable Python pipeline for producing conversion-focused web-design videos for [web-designs.online](https://web-designs.online). It uses Gemini for topic/script generation, gTTS for narration, Pexels for visuals, MoviePy/FFmpeg for rendering, and the YouTube Data API for uploads.
+A configurable Python pipeline for producing conversion-focused web design and digital marketing videos for [web-designs.online](https://web-designs.online). It uses Gemini for topic/script generation, gTTS for narration, Pexels for visuals, MoviePy/FFmpeg for rendering, and the YouTube Data API for uploads.
 
 ## Safe rollout
 
@@ -52,6 +52,8 @@ Add these repository Actions secrets: `GOOGLE_API_KEY`, `PEXELS_API_KEY`, `CLIEN
 Narration uses the natural `en-US-JennyNeural` voice through `edge-tts`, with gTTS as a fallback. Set `TTS_VOICE` or `TTS_RATE` in the workflow environment to switch voice or pacing. Spoken links are rendered as “web designs dot online”; clickable URLs remain in video descriptions.
 
 Each run automatically balances search optimization at approximately **45% SEO**, **25% GEO** (business, platform and local entities), and **30% AEO** (direct questions and answers). Gemini generates separate metadata for long-form videos and Shorts, including titles, descriptions, tags, search phrases and answer blocks. The pipeline renders and uploads both formats with separate thumbnails.
+
+The topic autopilot covers website growth and related digital marketing: content calendars, email sequences, social content, local discovery, brand messaging, lead generation, marketing funnels, analytics, paid acquisition and e-commerce marketing. It rotates practical angles so the channel can serve entrepreneurs across the full path from attention to conversion.
 
 The autopilot publishes one long-form lesson and three distinct Shorts per run: a mistake angle, a quick win, and a before-and-after angle. Each Short has its own title, description, tags, thumbnail and link back to the long lesson. Titles and opening hooks share one viewer promise, while the Shorts provide separate recommendation entry points without duplicate wording or clickbait.
 

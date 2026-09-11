@@ -192,9 +192,9 @@ def generate_curriculum(previous_titles=None):
         You are a conversion-focused web strategist creating a YouTube series for {CHANNEL_NAME}.
         {history}
         The audience is entrepreneurs, founders, local business owners, creators and service providers.
-        Focus on practical website decisions that help them earn trust, generate qualified enquiries and increase sales.
+        Focus on practical website and digital marketing decisions that help them earn trust, generate qualified enquiries and increase sales.
 
-        Build a useful sequence around positioning, homepage messaging, landing pages, offers, trust signals, SEO, mobile UX, speed, analytics and conversion optimization.
+        Build a useful sequence around positioning, brand messaging, homepage and landing pages, content marketing, email, social media, local discovery, offers, trust signals, SEO, mobile UX, analytics, funnels and conversion optimization.
 
         Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 20 lesson objects.
         Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
