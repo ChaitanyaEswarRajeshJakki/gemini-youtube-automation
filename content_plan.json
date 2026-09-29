@@ -1,144 +1,144 @@
 {
   "lessons": [
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 1: Preparing Your AI for Production",
-      "title": "Model Quantization & Pruning: Making Your AI Lean and Mean for Production",
+      "chapter": 5,
+      "part": 21,
+      "title": "What is Generative AI? Your Creative AI Sidekick.",
       "status": "complete",
-      "youtube_id": "m5mXzW9MibU"
+      "youtube_id": "Qq1krjY3pFg"
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 1: Preparing Your AI for Production",
-      "title": "Containerizing AI Applications with Docker: Packaging Your AI for Any Environment",
-      "status": "complete",
-      "youtube_id": "7kqSiEIxEcI"
+      "chapter": 5,
+      "part": 22,
+      "title": "Introduction to Large Language Models (LLMs): The Brains Behind Smart Text.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 1: Preparing Your AI for Production",
-      "title": "Building AI APIs with FastAPI/Flask: How Your AI Talks to Other Apps",
-      "status": "complete",
-      "youtube_id": "PorRZT3Sz2E"
+      "chapter": 5,
+      "part": 23,
+      "title": "Prompt Engineering: How to Talk to AI and Get What You Want.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 1: Preparing Your AI for Production",
-      "title": "Cloud Deployment Strategies (AWS Sagemaker/Hugging Face Spaces): Getting Your AI Online for Everyone",
-      "status": "complete",
-      "youtube_id": "fTdnbOuByL4"
+      "chapter": 5,
+      "part": 24,
+      "title": "Embeddings: Giving AI a Sense of Meaning and Relationships.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 1: Preparing Your AI for Production",
-      "title": "Monitoring & Observability for AI: Keeping an Eye on Your AI's Performance in the Wild",
-      "status": "complete",
-      "youtube_id": "nZEgajOu9UA"
+      "chapter": 5,
+      "part": 25,
+      "title": "Vector Databases: Where AI Stores Its Understanding of the World.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 2: Advanced AI System Design",
-      "title": "Asynchronous AI: Handling Many Requests Without Breaking a Sweat",
-      "status": "complete",
-      "youtube_id": "uX2KAobTsBE"
+      "chapter": 6,
+      "part": 26,
+      "title": "Retrieval Augmented Generation (RAG): AI That Reads Before It Speaks.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 2: Advanced AI System Design",
-      "title": "Load Balancing & Scaling AI Services: When Everyone Wants to Talk to Your AI",
-      "status": "complete",
-      "youtube_id": "mEH8JcNxiBs"
+      "chapter": 6,
+      "part": 27,
+      "title": "Building Your First RAG Application: Smarter Chatbots, Smarter Answers.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 2: Advanced AI System Design",
-      "title": "Microservices Architecture for AI: Building Modular and Resilient AI Systems",
-      "status": "complete",
-      "youtube_id": "4xIbYi4LZhA"
+      "chapter": 6,
+      "part": 28,
+      "title": "Fine-tuning LLMs: Teaching AI Your Special Way of Doing Things.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 2: Advanced AI System Design",
-      "title": "Stream Processing for Real-time AI: AI That Reacts Instantly to New Information",
-      "status": "complete",
-      "youtube_id": "m0nna1_xFVU"
+      "chapter": 6,
+      "part": 29,
+      "title": "LLM Architectures Simplified: The Encoder-Decoder & Decoder-Only Story.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 5: Deploying and Optimizing AI for the Real World",
-      "part": "Part 2: Advanced AI System Design",
-      "title": "Cost Optimization in AI Deployment: Running Your AI Smart, Not Just Fast",
-      "status": "complete",
-      "youtube_id": "HVxOt6S1MSI"
+      "chapter": 6,
+      "part": 30,
+      "title": "Evaluation Metrics for LLMs: How to Know if Your AI is Actually Smart.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 1: Enhancing AI Knowledge & Reasoning",
-      "title": "Knowledge Graphs & LLMs: Giving AI Structured Wisdom Beyond Text",
-      "status": "complete",
-      "youtube_id": "Ql9rS5JNCeI"
+      "chapter": 7,
+      "part": 31,
+      "title": "Introduction to AI Agents: Giving Your AI the Power to Act and Think.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 1: Enhancing AI Knowledge & Reasoning",
-      "title": "Function Calling in Depth: Empowering LLMs to Use External Tools Seamlessly",
-      "status": "complete",
-      "youtube_id": "hRp9ioBQSJw"
+      "chapter": 7,
+      "part": 32,
+      "title": "Advanced Tool Use for LLM Agents: When AI Needs More Than Just Words.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 1: Enhancing AI Knowledge & Reasoning",
-      "title": "Integrating Traditional ML with LLMs: Combining Strengths for Better Decisions",
-      "status": "complete",
-      "youtube_id": "YTGTaqTtWkQ"
+      "chapter": 7,
+      "part": 33,
+      "title": "Agent Orchestration with LangChain/CrewAI: Building Teams of AI Assistants.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 1: Enhancing AI Knowledge & Reasoning",
-      "title": "Adversarial Attacks & Robust AI: Protecting Your AI from Tricky Business",
-      "status": "complete",
-      "youtube_id": "w_Cf4o5YlzU"
+      "chapter": 7,
+      "part": 34,
+      "title": "Building a Multi-Agent System: AI Teams for Complex Problem Solving.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 1: Enhancing AI Knowledge & Reasoning",
-      "title": "Explainable AI (XAI): Understanding Why Your AI Made That Decision",
-      "status": "complete",
-      "youtube_id": "lBAM8CkOtlM"
+      "chapter": 7,
+      "part": 35,
+      "title": "LangGraph: Mapping Out Your AI's Thought Process for Complex Workflows.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 2: Responsible AI and Beyond",
-      "title": "Bias, Fairness & AI Ethics: Ensuring Your AI is Just and Unbiased",
-      "status": "complete",
-      "youtube_id": "MDpRuRtHIp8"
+      "chapter": 8,
+      "part": 36,
+      "title": "Transformers Demystified: The Magic of 'Attention' in AI.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 2: Responsible AI and Beyond",
-      "title": "Data Governance & Privacy in AI: Handling Sensitive Information Safely and Responsibly",
-      "status": "complete",
-      "youtube_id": "XBd5ubGcDT8"
+      "chapter": 8,
+      "part": 37,
+      "title": "Vision Transformers (ViT): How AI Sees and Understands Images.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 2: Responsible AI and Beyond",
-      "title": "AI for Code Generation & Review: Your AI Pair Programmer for Smarter Coding",
-      "status": "complete",
-      "youtube_id": "ER_AAXQBwzw"
+      "chapter": 8,
+      "part": 38,
+      "title": "Multimodal AI: Giving Your AI Multiple Senses (Text, Image, Audio).",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 2: Responsible AI and Beyond",
-      "title": "AI in Robotics & Embodied Agents: Giving AI a Physical Presence in the World",
-      "status": "complete",
-      "youtube_id": "-wDCYK9-ZE0"
+      "chapter": 8,
+      "part": 39,
+      "title": "Introduction to Reinforcement Learning: AI That Learns by Playing and Doing.",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Chapter 6: Deepening AI Capabilities and Ethical Considerations",
-      "part": "Part 2: Responsible AI and Beyond",
-      "title": "Building a Full-Stack AI Application: Bringing It All Together with a Practical Project",
-      "status": "complete",
-      "youtube_id": "-w-we7Hg7vE"
+      "chapter": 8,
+      "part": 40,
+      "title": "RL for Developers: Teaching AI to Master Games and Control Robots.",
+      "status": "pending",
+      "youtube_id": null
     }
   ]
 }
