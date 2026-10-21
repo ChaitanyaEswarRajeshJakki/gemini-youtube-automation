@@ -15,6 +15,22 @@ CLIENT_SECRETS_FILE = Path('client_secrets.json')
 CREDENTIALS_FILE = Path('credentials.json')
 YOUTUBE_UPLOAD_SCOPE = ["https://www.googleapis.com/auth/youtube.upload"]
 
+
+def sanitize_title(title: str | None, max_length: int = 100) -> str:
+    """Return a YouTube-safe title that is non-empty and within the API limit."""
+    clean_title = str(title or "").replace("&lt;", "").replace("&gt;", "").replace("<", "").replace(">", "").strip()
+
+    if not clean_title:
+        clean_title = "Untitled Video"
+
+    if len(clean_title) > max_length:
+        if max_length <= 3:
+            return clean_title[:max_length]
+        clean_title = clean_title[: max_length - 3].rstrip() + "..."
+
+    return clean_title
+
+
 def get_authenticated_service():
     """
     Handles the entire OAuth2 flow and returns an authenticated YouTube service object.
@@ -57,13 +73,14 @@ def get_authenticated_service():
 # MODIFIED: Added thumbnail_path parameter
 def upload_to_youtube(video_path, title, description, tags, thumbnail_path=None):
     """Uploads a video to YouTube with the given metadata and optionally a thumbnail."""
-    print(f"⬆️ Uploading '{video_path}' to YouTube...")
+    sanitized_title = sanitize_title(title)
+    print(f"⬆️ Uploading '{video_path}' to YouTube with title: {sanitized_title}")
     try:
         youtube = get_authenticated_service()
         
         request_body = {
             'snippet': {
-                'title': title,
+                'title': sanitized_title,
                 'description': description,
                 'tags': tags.split(','),
                 'categoryId': '28' # 28 = Science & Technology
