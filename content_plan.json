@@ -1,142 +1,142 @@
 {
   "lessons": [
     {
-      "chapter": "Advanced Reinforcement Learning",
+      "chapter": "Advanced Generative Models & Optimization",
       "part": 21,
-      "title": "Deep Q-Networks (DQN): Teaching AI to Play Atari Like a Human",
+      "title": "Diffusion Models: Painting Pictures with Noise and AI (Like Sculpting from a Blob)",
       "status": "complete",
-      "youtube_id": "57oTPpTgEtw"
+      "youtube_id": "-PEIzglQkk8"
     },
     {
-      "chapter": "Advanced Reinforcement Learning",
+      "chapter": "Advanced Generative Models & Optimization",
       "part": 22,
-      "title": "Policy Gradient Methods: When AI Learns by Adjusting its Habits (REINFORCE & Intro to Actor-Critic)",
+      "title": "Building Your First Image Generator with Diffusion Models: From Text to Art (Giving AI a Specific Recipe)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Advanced Reinforcement Learning",
+      "chapter": "Advanced Generative Models & Optimization",
       "part": 23,
-      "title": "Proximal Policy Optimization (PPO): The Stable Way to Train Complex AI Behaviors",
+      "title": "Model Quantization: Making Your AI Models Lighter and Faster (Using Pencil Marks Instead of Fine Paint)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
+      "chapter": "Advanced Generative Models & Optimization",
       "part": 24,
-      "title": "Generative Adversarial Networks (GANs): The AI Art Forgers and Detectives",
+      "title": "Parameter-Efficient Fine-Tuning (PEFT) & LoRA: Teaching Old Models New Tricks Without Breaking the Bank (Adding Notes to a Textbook)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
+      "chapter": "Ethical AI, Explainability & Robustness",
       "part": 25,
-      "title": "Variational Autoencoders (VAEs): AI's Imagination Machine for Data Generation",
+      "title": "Bias and Fairness in AI: Making Sure Your AI Treats Everyone Right (Like an Unbiased Judge)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
+      "chapter": "Ethical AI, Explainability & Robustness",
       "part": 26,
-      "title": "Diffusion Models: How AI Paints Realistic Pictures Step-by-Step",
+      "title": "Explainable AI (XAI): Peeking Inside the AI's Brain to Understand Decisions (Like a Doctor Explaining a Diagnosis)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Beyond LLMs: Exploring Other Generative AI",
+      "chapter": "Ethical AI, Explainability & Robustness",
       "part": 27,
-      "title": "Applying Diffusion Models: Creating Images, Videos, and 3D Assets with AI",
+      "title": "AI Security & Red Teaming: Protecting Your AI from Sneaky Attacks (Stress-Testing a Bridge for Weaknesses)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 28,
-      "title": "AI Ethics & Bias: Ensuring Fairness and Avoiding Pitfalls in Our AI",
+      "title": "Introduction to MLOps: The DevOps for AI Projects (Managing an AI Factory Assembly Line)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 29,
-      "title": "Explainable AI (XAI): Understanding Why Your AI Made That Decision",
+      "title": "Containerization with Docker for AI: Packaging Your AI for Easy Deployment (Like Shipping Containers for Software)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Responsible AI Development",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 30,
-      "title": "AI Safety & Alignment: Making Sure AI Works For Us, Not Against Us",
+      "title": "Orchestrating AI with Kubernetes (Basics): Managing Your AI Fleet (Like a Conductor Leading an Orchestra)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 31,
-      "title": "MLOps Fundamentals: From Local Code to Production-Ready AI",
+      "title": "Deploying LLMs & Agents: Putting Your Smart AI to Work (Opening a New AI-Powered Storefront)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 32,
-      "title": "Containerizing AI Applications: Packaging Your AI for Any Environment with Docker",
+      "title": "Monitoring and Logging for AI: Keeping an Eye on Your AI's Performance in the Wild (Your AI's Health Tracker)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
+      "chapter": "MLOps - Bringing AI to Production",
       "part": 33,
-      "title": "Cloud Deployment for AI: Launching Your AI on AWS, Azure, or GCP",
+      "title": "Continuous Integration/Deployment (CI/CD) for AI: Automating Your AI Development Cycle (Like an Automated Production Line)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "AI Deployment & MLOps",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 34,
-      "title": "Monitoring & Maintaining AI in Production: Keeping Your AI Smart and Healthy",
+      "title": "Knowledge Graphs & LLMs: Giving Your AI a Super Memory for Facts (Combining an Encyclopedia with a Conversationalist)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 35,
-      "title": "Advanced Tool Creation for Agents: Equipping Your AI with Custom Superpowers",
+      "title": "Self-Supervised Learning: When AI Teaches Itself from Scratch (Learning by Observing the World, No Teachers Needed)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 36,
-      "title": "Multi-Agent Systems: When AI Teams Collaborate to Solve Problems",
+      "title": "Transformers for Audio: Making AI Understand Sounds and Speech (AI as a Super Listener)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 37,
-      "title": "Agent Communication & Coordination: How AIs Talk and Team Up for Complex Tasks",
+      "title": "AI for Code Generation and Understanding: Your AI Coding Assistant (Like a Super-Smart Pair Programmer)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Advanced Agentic AI & Multi-Agent Systems",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 38,
-      "title": "Building a Multi-Agent Application: Designing a Collaborative AI Workforce",
+      "title": "Edge AI: Running Smart AI on Tiny Devices (Phones, Drones, IoT) (Giving a Mini-Brain to Small Gadgets)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Efficient AI & Future Trends",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 39,
-      "title": "Quantization & Pruning: Making AI Models Smaller, Faster, and Greener",
+      "title": "Federated Learning & Privacy-Preserving AI: Training AI Without Sharing Your Secrets (Learning from Many Without Revealing Anyone's ID)",
       "status": "pending",
       "youtube_id": null
     },
     {
-      "chapter": "Efficient AI & Future Trends",
+      "chapter": "Advanced Architectures, Data & Specialized Applications",
       "part": 40,
-      "title": "AI at the Edge: Bringing AI Intelligence Directly to Your Devices",
+      "title": "The Future of AI Development: What's Next for AI Builders? (Looking at the Horizon of AI Innovation)",
       "status": "pending",
       "youtube_id": null
     }
