@@ -1,144 +1,144 @@
 {
   "lessons": [
     {
-      "chapter": "Advanced Generative Models & Optimization",
-      "part": 21,
-      "title": "Diffusion Models: Painting Pictures with Noise and AI (Like Sculpting from a Blob)",
+      "chapter": 21,
+      "part": 1,
+      "title": "What are Large Language Models (LLMs) Really? (The Super-Smart Storyteller)",
       "status": "complete",
-      "youtube_id": "-PEIzglQkk8"
+      "youtube_id": "yMVaMik2a70"
     },
     {
-      "chapter": "Advanced Generative Models & Optimization",
-      "part": 22,
-      "title": "Building Your First Image Generator with Diffusion Models: From Text to Art (Giving AI a Specific Recipe)",
-      "status": "complete",
-      "youtube_id": "UR__8PgCbj4"
+      "chapter": 22,
+      "part": 1,
+      "title": "Prompt Engineering: Talking to Your LLM Effectively (Like Giving Clear Instructions to a Genius)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Generative Models & Optimization",
-      "part": 23,
-      "title": "Model Quantization: Making Your AI Models Lighter and Faster (Using Pencil Marks Instead of Fine Paint)",
-      "status": "complete",
-      "youtube_id": "P6DMURJJ0Uw"
+      "chapter": 23,
+      "part": 1,
+      "title": "Embeddings: Turning Words into Numbers for AI (Giving AI a Sense of Meaning and Similarity)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Generative Models & Optimization",
-      "part": 24,
-      "title": "Parameter-Efficient Fine-Tuning (PEFT) & LoRA: Teaching Old Models New Tricks Without Breaking the Bank (Adding Notes to a Textbook)",
-      "status": "complete",
-      "youtube_id": "Kr3kzZKymVI"
+      "chapter": 24,
+      "part": 1,
+      "title": "Vector Databases: Giving Your AI a Super-Fast Memory for Meaning (Like an Index for Ideas, Not Just Words)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Ethical AI, Explainability & Robustness",
-      "part": 25,
-      "title": "Bias and Fairness in AI: Making Sure Your AI Treats Everyone Right (Like an Unbiased Judge)",
-      "status": "complete",
-      "youtube_id": "-4UwiabsE0k"
+      "chapter": 25,
+      "part": 1,
+      "title": "Retrieval-Augmented Generation (RAG): Making Your LLM Factually Accurate (Like an AI with a Research Library)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Ethical AI, Explainability & Robustness",
-      "part": 26,
-      "title": "Explainable AI (XAI): Peeking Inside the AI's Brain to Understand Decisions (Like a Doctor Explaining a Diagnosis)",
-      "status": "complete",
-      "youtube_id": "cFyCKV3ePfI"
+      "chapter": 26,
+      "part": 1,
+      "title": "Introduction to AI Agents: Giving Your AI Tools and Autonomy (AI as a Personal Assistant with a To-Do List)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Ethical AI, Explainability & Robustness",
-      "part": 27,
-      "title": "AI Security & Red Teaming: Protecting Your AI from Sneaky Attacks (Stress-Testing a Bridge for Weaknesses)",
-      "status": "complete",
-      "youtube_id": "5kAd--YM438"
+      "chapter": 27,
+      "part": 1,
+      "title": "Tool Use for AI Agents: Equipping Your AI with Skills (Giving Your AI a Toolbox of Apps)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 28,
-      "title": "Introduction to MLOps: The DevOps for AI Projects (Managing an AI Factory Assembly Line)",
-      "status": "complete",
-      "youtube_id": "3b9WM1jhIw0"
+      "chapter": 28,
+      "part": 1,
+      "title": "Planning and Reasoning for AI Agents: How AI Solves Complex Problems (Like an AI Making a Step-by-Step Plan)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 29,
-      "title": "Containerization with Docker for AI: Packaging Your AI for Easy Deployment (Like Shipping Containers for Software)",
-      "status": "complete",
-      "youtube_id": "dN5FrnV04fM"
+      "chapter": 29,
+      "part": 1,
+      "title": "LangChain: Building Powerful LLM Applications (Like Lego Blocks for AI Projects)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 30,
-      "title": "Orchestrating AI with Kubernetes (Basics): Managing Your AI Fleet (Like a Conductor Leading an Orchestra)",
-      "status": "complete",
-      "youtube_id": "cpZdVNsR4oY"
+      "chapter": 30,
+      "part": 1,
+      "title": "LangGraph: Orchestrating Complex AI Workflows (Designing a Smart AI's Decision-Making Flowchart)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 31,
-      "title": "Deploying LLMs & Agents: Putting Your Smart AI to Work (Opening a New AI-Powered Storefront)",
-      "status": "complete",
-      "youtube_id": "7SOVSJN1mcM"
+      "chapter": 31,
+      "part": 1,
+      "title": "Transformers Architecture Deconstructed (Part 1: The Encoder): How AI Understands Language (Like Breaking Down a Translator's Brain)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 32,
-      "title": "Monitoring and Logging for AI: Keeping an Eye on Your AI's Performance in the Wild (Your AI's Health Tracker)",
-      "status": "complete",
-      "youtube_id": "0nPvp3C3BkM"
+      "chapter": 32,
+      "part": 1,
+      "title": "Transformers Architecture Deconstructed (Part 2: The Decoder & Attention): How AI Generates Language (How the Translator Crafts New Sentences)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "MLOps - Bringing AI to Production",
-      "part": 33,
-      "title": "Continuous Integration/Deployment (CI/CD) for AI: Automating Your AI Development Cycle (Like an Automated Production Line)",
-      "status": "complete",
-      "youtube_id": "u9u5ZFqrAOQ"
+      "chapter": 33,
+      "part": 1,
+      "title": "Attention Mechanisms: The Spotlight of AI Learning (How AI Focuses on Important Information)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 34,
-      "title": "Knowledge Graphs & LLMs: Giving Your AI a Super Memory for Facts (Combining an Encyclopedia with a Conversationalist)",
-      "status": "complete",
-      "youtube_id": "hf07QIfxfxg"
+      "chapter": 34,
+      "part": 1,
+      "title": "From BERT to GPT: A Tour of Transformer Models (Family Tree of AI Language Geniuses)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 35,
-      "title": "Self-Supervised Learning: When AI Teaches Itself from Scratch (Learning by Observing the World, No Teachers Needed)",
-      "status": "complete",
-      "youtube_id": "01i8iPy6Lus"
+      "chapter": 35,
+      "part": 1,
+      "title": "Multi-Modal AI: Beyond Text - Images, Audio, and More (AI That Can See, Hear, and Talk)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 36,
-      "title": "Transformers for Audio: Making AI Understand Sounds and Speech (AI as a Super Listener)",
-      "status": "complete",
-      "youtube_id": "7mAhM2zcQow"
+      "chapter": 36,
+      "part": 1,
+      "title": "Introduction to Reinforcement Learning: AI Learning Through Trial and Error (Like Training a Pet with Rewards)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 37,
-      "title": "AI for Code Generation and Understanding: Your AI Coding Assistant (Like a Super-Smart Pair Programmer)",
-      "status": "complete",
-      "youtube_id": "Xs67oDgNacM"
+      "chapter": 37,
+      "part": 1,
+      "title": "RL for AI Agents: Making Agents Learn from Experience (Teaching Your AI to Play Games and Solve Problems)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 38,
-      "title": "Edge AI: Running Smart AI on Tiny Devices (Phones, Drones, IoT) (Giving a Mini-Brain to Small Gadgets)",
-      "status": "complete",
-      "youtube_id": "ghSQwEfVTqQ"
+      "chapter": 38,
+      "part": 1,
+      "title": "Multi-Agent Systems: When AIs Work Together (Like a Team of AI Specialists)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 39,
-      "title": "Federated Learning & Privacy-Preserving AI: Training AI Without Sharing Your Secrets (Learning from Many Without Revealing Anyone's ID)",
-      "status": "complete",
-      "youtube_id": "9sUouwb8IYE"
+      "chapter": 39,
+      "part": 1,
+      "title": "AI System Design & Architecture: Blueprints for Complex AI (Designing the Engine Room of an AI Super-System)",
+      "status": "pending",
+      "youtube_id": null
     },
     {
-      "chapter": "Advanced Architectures, Data & Specialized Applications",
-      "part": 40,
-      "title": "The Future of AI Development: What's Next for AI Builders? (Looking at the Horizon of AI Innovation)",
-      "status": "complete",
-      "youtube_id": "rgd4xj9Pu6k"
+      "chapter": 40,
+      "part": 1,
+      "title": "Building Scalable AI Applications: From Prototype to Production (Turning Your AI Idea into a Global Service)",
+      "status": "pending",
+      "youtube_id": null
     }
   ]
 }
